@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { JWTBody, RequestWithJWTBody } from "./dto/jwt";
 import { usersController } from "./controllers/users_controller";
+import { reptileController } from "./controllers/reptiles_controller";
 
 dotenv.config();
 const client = new PrismaClient();
@@ -15,7 +16,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 //sign up
-
 type LoginBody = {
   email: string,
   password: string
@@ -52,6 +52,7 @@ app.post("/sessions",  async (req, res) => {
 });
 
 usersController(app, client);
+reptileController(app, client);
 
 app.get("/", (req, res) => {
   res.send(`<h1>Hello, world!</h1>`);
