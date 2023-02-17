@@ -30,10 +30,20 @@ const createHusbandry = (client: PrismaClient): RequestHandler =>
     
   }
 
+const getAll = (client: PrismaClient): RequestHandler =>
+async (req, res) => {
+  const data = await client.husbandryRecord.findMany();
+
+  res.json({data});
+  // TODO get the user
+}
+
+
 
 export const husbandryController = controller(
   "husbandry",
   [
-    { path: "/", method: "post", endpointBuilder: createHusbandry, skipAuth: true }
+    { path: "/", method: "post", endpointBuilder: createHusbandry, skipAuth: true },
+    { path: "/", method: "get", endpointBuilder: getAll, skipAuth: true }
   ]
 )
