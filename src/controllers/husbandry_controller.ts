@@ -30,7 +30,7 @@ const createHusbandry = (client: PrismaClient): RequestHandler =>
     
   }
 
-const getAll = (client: PrismaClient): RequestHandler =>
+const getAllHusbandry = (client: PrismaClient): RequestHandler =>
 async (req, res) => {
   const data = await client.husbandryRecord.findMany();
 
@@ -44,6 +44,6 @@ export const husbandryController = controller(
   "husbandry",
   [
     { path: "/", method: "post", endpointBuilder: createHusbandry, skipAuth: true },
-    { path: "/", method: "get", endpointBuilder: getAll, skipAuth: true }
+    { path: "/all", method: "get", endpointBuilder: getAllHusbandry, skipAuth: true }
   ]
 )
