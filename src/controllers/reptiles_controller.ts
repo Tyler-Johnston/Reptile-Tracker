@@ -6,11 +6,13 @@ import jwt from "jsonwebtoken";
 import { controller } from "../lib/controller";
 
 type CreateReptileBody = {
-  species: string,
+  species: "ball_python" | "king_snake" | "corn_snake" | "redtail_boa",
   userId: number
   name: string,
-  sex: string,
+  sex: "m" | "f",
 }
+
+// TODO: 1) create reptile 2) update reptile 3) delete reptile 4) list all reptiles
 
 const createReptile = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
@@ -33,10 +35,16 @@ const createReptile = (client: PrismaClient): RequestHandler =>
     res.json({ reptile, token });
   }
 
+  const updateReptile = (client: PrismaClient): RequestHandler =>
+   async (req, res) => {
 
-export const reptileController = controller(
+   }
+
+
+export const reptilesController = controller(
   "reptiles",
   [
-    { path: "/", method: "post", endpointBuilder: createReptile, skipAuth: true }
+    { path: "/", method: "post", endpointBuilder: createReptile, skipAuth: true },
+    { path: "/:reptileId", method: "put", endpointBuilder: updateReptile }
   ]
 )

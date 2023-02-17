@@ -8,7 +8,7 @@ import { controller } from "../lib/controller";
 type CreateScheduleBody = {
   reptileId: number,
   userId: number,
-  type: string,
+  type: "feed" | "record" | "clean",
   description: string,
   monday: boolean,
   tuesday: boolean,
@@ -19,6 +19,8 @@ type CreateScheduleBody = {
   sunday: boolean
 
 }
+
+//TODO: 1) create a schedule 2) list all schedules for reptiles 3) list all schedules for users
 
 const createSchedule = (client: PrismaClient): RequestHandler =>
   async (req, res) => {

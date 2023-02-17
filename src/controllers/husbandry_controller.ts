@@ -13,6 +13,8 @@ type CreateHusbandryBody = {
   humidity: number
 }
 
+// TODO: 1) create a husbandry 2) list all husbandries
+
 const createHusbandry = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
     const {reptileId, length, weight, temperature, humidity} = req.body as CreateHusbandryBody;

@@ -4,9 +4,10 @@ import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import { JWTBody, RequestWithJWTBody } from "./dto/jwt";
 import { usersController } from "./controllers/users_controller";
-import { reptileController } from "./controllers/reptiles_controller";
+import { reptilesController } from "./controllers/reptiles_controller";
+import { feedingController } from "./controllers/feeding_controller";
+import { husbandryController } from "./controllers/husbandry_controller";
 
 dotenv.config();
 const client = new PrismaClient();
@@ -52,7 +53,9 @@ app.post("/sessions",  async (req, res) => {
 });
 
 usersController(app, client);
-reptileController(app, client);
+reptilesController(app, client);
+feedingController(app, client);
+husbandryController(app, client);
 
 app.get("/", (req, res) => {
   res.send(`<h1>Hello, world!</h1>`);
