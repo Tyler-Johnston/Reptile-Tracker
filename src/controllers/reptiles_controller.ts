@@ -12,7 +12,7 @@ type CreateReptileBody = {
   sex: "m" | "f",
 }
 
-// TODO: 1) create reptile 2) update reptile 3) delete reptile 4) list all reptiles
+// TODO: 1) create reptile 2) update reptile 3) delete reptile 4) xxxxlist all reptiles 
 
 const createReptile = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
@@ -40,11 +40,19 @@ const createReptile = (client: PrismaClient): RequestHandler =>
 
    }
 
+   const getAllReptiles = (client: PrismaClient): RequestHandler =>
+   async (req, res) => {
+     const data = await client.reptile.findMany();
+   
+     res.json({data});
+   }
+
 
 export const reptilesController = controller(
   "reptiles",
   [
     { path: "/", method: "post", endpointBuilder: createReptile, skipAuth: true },
-    { path: "/:reptileId", method: "put", endpointBuilder: updateReptile }
+    { path: "/:reptileId", method: "put", endpointBuilder: updateReptile },
+    { path: "/all", method: "get", endpointBuilder: getAllReptiles, skipAuth: true }
   ]
 )

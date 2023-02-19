@@ -44,10 +44,18 @@ const createSchedule = (client: PrismaClient): RequestHandler =>
     // find user & reptile?
   }
 
+  const getAllSchedules = (client: PrismaClient): RequestHandler =>
+   async (req, res) => {
+     const data = await client.schedule.findMany();
+   
+     res.json({data});
+   }
+
 
 export const scheduleController = controller(
   "schedule",
   [
-    { path: "/", method: "post", endpointBuilder: createSchedule, skipAuth: true }
+    { path: "/", method: "post", endpointBuilder: createSchedule, skipAuth: true },
+    { path: "/all", method: "get", endpointBuilder: getAllSchedules, skipAuth: true }
   ]
 )

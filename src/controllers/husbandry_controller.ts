@@ -13,7 +13,7 @@ type CreateHusbandryBody = {
   humidity: number
 }
 
-// TODO: 1) create a husbandry 2) list all husbandries
+// TODO: 1) create a husbandry 2) xxxxxlist all husbandries
 
 const createHusbandry = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
@@ -30,13 +30,15 @@ const createHusbandry = (client: PrismaClient): RequestHandler =>
     
   }
 
-const getAllHusbandry = (client: PrismaClient): RequestHandler =>
+
+
+const getAllHusbandrys = (client: PrismaClient): RequestHandler =>
 async (req, res) => {
   const data = await client.husbandryRecord.findMany();
-
   res.json({data});
-  // TODO get the user
 }
+
+
 
 
 
@@ -44,6 +46,6 @@ export const husbandryController = controller(
   "husbandry",
   [
     { path: "/", method: "post", endpointBuilder: createHusbandry, skipAuth: true },
-    { path: "/all", method: "get", endpointBuilder: getAllHusbandry, skipAuth: true }
+    { path: "/all", method: "get", endpointBuilder: getAllHusbandrys, skipAuth: true }
   ]
 )
