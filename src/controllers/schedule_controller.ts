@@ -32,7 +32,7 @@ const createSchedule = (client: PrismaClient): RequestHandler =>
         type,
         description,
         monday,
-        tuesday,
+        tuesday, 
         wednesday,
         thursday,
         friday,
@@ -40,8 +40,6 @@ const createSchedule = (client: PrismaClient): RequestHandler =>
         sunday
       },
     });
-
-    // find user & reptile?
   }
 
   const getAllSchedules = (client: PrismaClient): RequestHandler =>

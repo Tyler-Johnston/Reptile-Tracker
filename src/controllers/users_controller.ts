@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { controller } from "../lib/controller";
 
+//TODO: CHECK IF THIS IS NEEDED
 const getMe = (client: PrismaClient): RequestHandler =>
   async (req: RequestWithJWTBody, res) => {
     const userId = req.jwtBody?.userId;
