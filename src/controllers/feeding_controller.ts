@@ -11,7 +11,7 @@ type CreateFeedingBody = {
   foodItem: string
 }
 
-// TODO: 1) create a feeding for a reptile 2) list all feedings for reptiles
+// TODO: 1) create a feeding for a reptile 2) list all feedings for reptilesxxxx
 
 const createFeeding = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
@@ -22,12 +22,25 @@ const createFeeding = (client: PrismaClient): RequestHandler =>
         foodItem
       },
     });
+    res.json({feeding});
   }
+const getAllFeedings = (client: PrismaClient): RequestHandler =>
+  async (req, res) => {
+    const reptileId = req.body.reptileId;
 
+    const data = await client.feeding.findMany({
+      where:{
+        reptileId: reptileId,
+      }
+    });
+    
+    res.json({data});
+  }
 
 export const feedingController = controller(
   "feeding",
   [
-    { path: "/", method: "post", endpointBuilder: createFeeding, skipAuth: true }
+    { path: "/", method: "post", endpointBuilder: createFeeding, skipAuth: true },
+    { path: "/retrieve", method: "get", endpointBuilder: getAllFeedings, skipAuth: true }
   ]
 )
