@@ -27,6 +27,7 @@ const createHusbandry = (client: PrismaClient): RequestHandler =>
         humidity
       },
     });
+    
     res.json({husbandry});
     
   }
