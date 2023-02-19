@@ -51,21 +51,23 @@ const createReptile = (client: PrismaClient): RequestHandler =>
    async (req, res) => {
     const reptileId = req.body.reptileId;
 
-    const reptile = await client.reptile.findMany({
+    const reptile = await client.feeding.findFirst({
       where: {
         id: reptileId,
       },
     });
 
-    if (!reptile) {
+    if (reptile === null) {
       return res.status(404).json({ message: 'Reptile not found' });
     }
 
-    const deletedReptile = await client.reptile.delete({
+    const deletedReptile = await client.feeding.delete({
       where: {
         id: reptileId,
       },
     });
+
+    
 
     res.json({ deletedReptile });
 

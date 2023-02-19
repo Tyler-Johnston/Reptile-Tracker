@@ -33,9 +33,7 @@ const getFeeding = (client: PrismaClient): RequestHandler =>
         reptileId: reptileId,
       }
     });
-    if (!data) {
-      return res.status(404).json({ message: 'Reptile not found' });
-    }
+
     res.json({data});
   }
 
