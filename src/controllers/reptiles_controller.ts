@@ -97,7 +97,7 @@ export const reptilesController = controller(
   "reptile",
   [
     { path: "/", method: "post", endpointBuilder: createReptile, skipAuth: true },
-    { path: "/:reptileId", method: "put", endpointBuilder: updateReptile },
+    { path: "/update/:reptileId", method: "put", endpointBuilder: updateReptile },
     { path: "/all", method: "get", endpointBuilder: getAllReptiles, skipAuth: true },
     { path: "/delete", method: "delete", endpointBuilder: deleteReptile, skipAuth: true }
   ]
