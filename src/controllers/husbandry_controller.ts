@@ -27,14 +27,20 @@ const createHusbandry = (client: PrismaClient): RequestHandler =>
         humidity
       },
     });
+    res.json({husbandry});
     
   }
 
 
 
-const getAllHusbandrys = (client: PrismaClient): RequestHandler =>
+const getHusbandry = (client: PrismaClient): RequestHandler =>
 async (req, res) => {
-  const data = await client.husbandryRecord.findMany();
+  const reptileId = req.body.reptileId;
+  const data = await client.husbandryRecord.findMany(
+    {where: {
+      reptileId:reptileId,
+    }}
+  );
   res.json({data});
 }
 
@@ -46,6 +52,6 @@ export const husbandryController = controller(
   "husbandry",
   [
     { path: "/", method: "post", endpointBuilder: createHusbandry, skipAuth: true },
-    { path: "/all", method: "get", endpointBuilder: getAllHusbandrys, skipAuth: true }
+    { path: "/retrieve", method: "get", endpointBuilder: getHusbandry, skipAuth: true }
   ]
 )
