@@ -47,12 +47,36 @@ const createReptile = (client: PrismaClient): RequestHandler =>
      res.json({data});
    }
 
+   const deleteReptile = (client: PrismaClient): RequestHandler =>
+   async (req, res) => {
+    const reptileId = req.body.reptileId;
+
+    const reptile = await client.reptile.findMany({
+      where: {
+        id: reptileId,
+      },
+    });
+
+    if (!reptile) {
+      return res.status(404).json({ message: 'Reptile not found' });
+    }
+
+    const deletedReptile = await client.reptile.delete({
+      where: {
+        id: reptileId,
+      },
+    });
+
+    res.json({ deletedReptile });
+
+   }
 
 export const reptilesController = controller(
-  "reptiles",
+  "reptile",
   [
     { path: "/", method: "post", endpointBuilder: createReptile, skipAuth: true },
     { path: "/:reptileId", method: "put", endpointBuilder: updateReptile },
-    { path: "/all", method: "get", endpointBuilder: getAllReptiles, skipAuth: true }
+    { path: "/all", method: "get", endpointBuilder: getAllReptiles, skipAuth: true },
+    { path: "/delete", method: "delete", endpointBuilder: deleteReptile, skipAuth: true }
   ]
 )

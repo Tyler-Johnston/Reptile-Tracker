@@ -24,7 +24,7 @@ const createFeeding = (client: PrismaClient): RequestHandler =>
     });
     res.json({feeding});
   }
-const getAllFeedings = (client: PrismaClient): RequestHandler =>
+const getFeeding = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
     const reptileId = req.body.reptileId;
 
@@ -33,7 +33,9 @@ const getAllFeedings = (client: PrismaClient): RequestHandler =>
         reptileId: reptileId,
       }
     });
-    
+    if (!data) {
+      return res.status(404).json({ message: 'Reptile not found' });
+    }
     res.json({data});
   }
 
@@ -41,6 +43,6 @@ export const feedingController = controller(
   "feeding",
   [
     { path: "/", method: "post", endpointBuilder: createFeeding, skipAuth: true },
-    { path: "/retrieve", method: "get", endpointBuilder: getAllFeedings, skipAuth: true }
+    { path: "/retrieve", method: "get", endpointBuilder: getFeeding, skipAuth: true }
   ]
 )
