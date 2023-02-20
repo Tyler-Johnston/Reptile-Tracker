@@ -15,10 +15,11 @@ type CreateFeedingBody = {
 
 const createFeeding = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
-    const {reptileId, foodItem} = req.body as CreateFeedingBody;
+    const {foodItem} = req.body as CreateFeedingBody;
+    const {reptileId} = req.params;
     const feeding = await client.feeding.create({
       data: {
-        reptileId,
+        reptileId:parseInt(reptileId),
         foodItem
       },
     });
@@ -26,11 +27,11 @@ const createFeeding = (client: PrismaClient): RequestHandler =>
   }
 const getFeeding = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
-    const reptileId = req.body.reptileId;
+    const {reptileId} = req.params;
 
     const data = await client.feeding.findMany({
       where:{
-        reptileId: reptileId,
+        reptileId: parseInt(reptileId),
       }
     });
 
@@ -40,7 +41,7 @@ const getFeeding = (client: PrismaClient): RequestHandler =>
 export const feedingController = controller(
   "feeding",
   [
-    { path: "/", method: "post", endpointBuilder: createFeeding, skipAuth: true },
-    { path: "/retrieve", method: "get", endpointBuilder: getFeeding, skipAuth: true }
+    { path: "/:reptileId", method: "post", endpointBuilder: createFeeding, skipAuth: true },
+    { path: "/retrieve/:reptileId", method: "get", endpointBuilder: getFeeding, skipAuth: true }
   ]
 )
