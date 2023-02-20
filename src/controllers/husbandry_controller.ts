@@ -37,10 +37,10 @@ const createHusbandry = (client: PrismaClient): RequestHandler =>
 
 const getHusbandry = (client: PrismaClient): RequestHandler =>
 async (req, res) => {
-  const reptileId = req.body.reptileId;
+  const {reptileId} = req.params;
   const data = await client.husbandryRecord.findMany(
     {where: {
-      reptileId:reptileId,
+      reptileId:parseInt(reptileId)
     }}
   );
   res.json({data});
@@ -53,7 +53,7 @@ async (req, res) => {
 export const husbandryController = controller(
   "husbandry",
   [
-    { path: "/", method: "post", endpointBuilder: createHusbandry, skipAuth: true },
-    { path: "/retrieve", method: "get", endpointBuilder: getHusbandry, skipAuth: true }
+    { path: "/:reptileId", method: "post", endpointBuilder: createHusbandry, skipAuth: true },
+    { path: "/:reptileId", method: "get", endpointBuilder: getHusbandry, skipAuth: true }
   ]
 )

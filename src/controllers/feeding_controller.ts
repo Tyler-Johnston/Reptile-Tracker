@@ -42,6 +42,6 @@ export const feedingController = controller(
   "feeding",
   [
     { path: "/:reptileId", method: "post", endpointBuilder: createFeeding, skipAuth: true },
-    { path: "/retrieve/:reptileId", method: "get", endpointBuilder: getFeeding, skipAuth: true }
+    { path: "/:reptileId", method: "get", endpointBuilder: getFeeding, skipAuth: true }
   ]
 )
