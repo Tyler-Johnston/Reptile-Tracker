@@ -44,7 +44,7 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
       });
 
       if (reptile === null) {
-        return res.status(404).json({ message: 'Reptile not found' });
+        return res.status(404).json({ message: "Reptile not found" });
       }
   
       const updatedReptile = await client.reptile.update({
@@ -97,8 +97,8 @@ export const reptilesController = controller(
   "reptile",
   [
     { path: "/", method: "post", endpointBuilder: createReptile, skipAuth: true },
-    { path: "/update/:reptileId", method: "put", endpointBuilder: updateReptile },
-    { path: "/all", method: "get", endpointBuilder: getAllReptiles, skipAuth: true },
-    { path: "/delete/:reptileId", method: "delete", endpointBuilder: deleteReptile, skipAuth: true }
+    { path: "/:reptileId", method: "put", endpointBuilder: updateReptile },
+    { path: "/", method: "get", endpointBuilder: getAllReptiles, skipAuth: true },
+    { path: "/:reptileId", method: "delete", endpointBuilder: deleteReptile, skipAuth: true }
   ]
 )

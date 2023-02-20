@@ -40,6 +40,7 @@ const createSchedule = (client: PrismaClient): RequestHandler =>
         sunday
       },
     });
+    res.json(schedule)
   }
 
   const getAllSchedules = (client: PrismaClient): RequestHandler =>
@@ -54,6 +55,6 @@ export const scheduleController = controller(
   "schedule",
   [
     { path: "/", method: "post", endpointBuilder: createSchedule, skipAuth: true },
-    { path: "/all", method: "get", endpointBuilder: getAllSchedules, skipAuth: true }
+    { path: "/", method: "get", endpointBuilder: getAllSchedules, skipAuth: true }
   ]
 )
