@@ -17,10 +17,11 @@ type CreateHusbandryBody = {
 
 const createHusbandry = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
-    const {reptileId, length, weight, temperature, humidity} = req.body as CreateHusbandryBody;
+    const {length, weight, temperature, humidity} = req.body as CreateHusbandryBody;
+    const {reptileId} = req.params;
     const husbandry = await client.husbandryRecord.create({
       data: {
-        reptileId,
+        reptileId:parseInt(reptileId),
         length,
         weight,
         temperature,
