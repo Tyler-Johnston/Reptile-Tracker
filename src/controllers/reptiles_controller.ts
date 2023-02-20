@@ -25,7 +25,7 @@ const createReptile = (client: PrismaClient): RequestHandler =>
         sex,
       }
     });
-    res.json({ reptile});
+    res.json({ reptile });
   } else {
     return res.status(400).json({ message: "Reptile species or sex does not match required type"});
   }
