@@ -13,20 +13,22 @@ type CreateHusbandryBody = {
   humidity: number
 }
 
-// TODO: 1) create a husbandry 2) xxxxxlist all husbandries
 
 const createHusbandry = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
-    const {reptileId, length, weight, temperature, humidity} = req.body as CreateHusbandryBody;
+    //TODO User specific
+    const {length, weight, temperature, humidity} = req.body as CreateHusbandryBody;
+    const {reptileId} = req.params;
     const husbandry = await client.husbandryRecord.create({
       data: {
-        reptileId,
+        reptileId:parseInt(reptileId),
         length,
         weight,
         temperature,
         humidity
       },
     });
+    
     res.json({husbandry});
     
   }
@@ -34,11 +36,13 @@ const createHusbandry = (client: PrismaClient): RequestHandler =>
 
 
 const getHusbandry = (client: PrismaClient): RequestHandler =>
+//TODO Param or body
+// TODO user specific
 async (req, res) => {
-  const reptileId = req.body.reptileId;
+  const {reptileId} = req.params;
   const data = await client.husbandryRecord.findMany(
     {where: {
-      reptileId:reptileId,
+      reptileId:parseInt(reptileId)
     }}
   );
   res.json({data});
@@ -51,7 +55,7 @@ async (req, res) => {
 export const husbandryController = controller(
   "husbandry",
   [
-    { path: "/", method: "post", endpointBuilder: createHusbandry, skipAuth: true },
-    { path: "/retrieve", method: "get", endpointBuilder: getHusbandry, skipAuth: true }
+    { path: "/:reptileId", method: "post", endpointBuilder: createHusbandry, skipAuth: true },
+    { path: "/:reptileId", method: "get", endpointBuilder: getHusbandry, skipAuth: true }
   ]
 )

@@ -8,6 +8,7 @@ import { usersController } from "./controllers/users_controller";
 import { reptilesController } from "./controllers/reptiles_controller";
 import { feedingController } from "./controllers/feeding_controller";
 import { husbandryController } from "./controllers/husbandry_controller";
+import { scheduleController } from "./controllers/schedule_controller";
 
 dotenv.config();
 const client = new PrismaClient();
@@ -55,11 +56,8 @@ app.post("/sessions",  async (req, res) => {
 usersController(app, client);
 reptilesController(app, client);
 feedingController(app, client);
+scheduleController(app, client);
 husbandryController(app, client);
-
-app.get("/", (req, res) => {
-  res.send(`<h1>Hello, world!</h1>`);
-});
 
 app.listen(parseInt(process.env.PORT || "3000", 10), () => {
   console.log(`App running on port ${process.env.PORT}`);

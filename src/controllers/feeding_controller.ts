@@ -11,14 +11,15 @@ type CreateFeedingBody = {
   foodItem: string
 }
 
-// TODO: 1) create a feeding for a reptile 2) list all feedings for reptilesxxxx
 
 const createFeeding = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
-    const {reptileId, foodItem} = req.body as CreateFeedingBody;
+    //TODO user specific
+    const {foodItem} = req.body as CreateFeedingBody;
+    const {reptileId} = req.params;
     const feeding = await client.feeding.create({
       data: {
-        reptileId,
+        reptileId:parseInt(reptileId),
         foodItem
       },
     });
@@ -26,11 +27,13 @@ const createFeeding = (client: PrismaClient): RequestHandler =>
   }
 const getFeeding = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
-    const reptileId = req.body.reptileId;
+    //TODO Do we need to use the param or send a body
+    //TODO USER SPECIFIC
+    const {reptileId} = req.params;
 
     const data = await client.feeding.findMany({
       where:{
-        reptileId: reptileId,
+        reptileId: parseInt(reptileId),
       }
     });
 
@@ -40,7 +43,7 @@ const getFeeding = (client: PrismaClient): RequestHandler =>
 export const feedingController = controller(
   "feeding",
   [
-    { path: "/", method: "post", endpointBuilder: createFeeding, skipAuth: true },
-    { path: "/retrieve", method: "get", endpointBuilder: getFeeding, skipAuth: true }
+    { path: "/:reptileId", method: "post", endpointBuilder: createFeeding, skipAuth: true },
+    { path: "/:reptileId", method: "get", endpointBuilder: getFeeding, skipAuth: true }
   ]
 )
