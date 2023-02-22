@@ -15,7 +15,8 @@ type CreateReptileBody = {
 const createReptile = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
     const {userId, species, name, sex} = req.body as CreateReptileBody
-
+    //TODO user specific
+    //NOTE REMOVE THIS: No :reptileId cause auto generated
     if ((species === "ball_python" ||  species === "king_snake" || species === "corn_snake" || species === "redtail_boa") && (sex === "m" || sex === "f")) {
     const reptile = await client.reptile.create({
       data: {
@@ -33,6 +34,8 @@ const createReptile = (client: PrismaClient): RequestHandler =>
 
 const updateReptile = (client: PrismaClient): RequestHandler =>
    async (req, res) => {
+    //TODO user specific
+    //TODO param or body
     const {userId, species, name, sex} = req.body as CreateReptileBody;
     const {reptileId} = req.params
 
@@ -67,6 +70,8 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
 
 const getAllReptiles = (client: PrismaClient): RequestHandler =>
    async (req, res) => {
+    //TODO param or body
+    //TODO user specific
      const data = await client.reptile.findMany();
      res.json({data});
    }
@@ -74,7 +79,8 @@ const getAllReptiles = (client: PrismaClient): RequestHandler =>
 const deleteReptile = (client: PrismaClient): RequestHandler =>
    async (req, res) => {
     const {reptileId} = req.params
-
+//TODO param or body
+//TODO user specific
     const reptile = await client.reptile.findFirst({
       where: {
         id: parseInt(reptileId),
@@ -86,6 +92,8 @@ const deleteReptile = (client: PrismaClient): RequestHandler =>
     }
 
     const deletedReptile = await client.reptile.delete({
+      //TODO user specifc VERY IMPORTANT ON THIS ONE
+      //TODO param or body
       where: {
         id: parseInt(reptileId),
       },
@@ -96,8 +104,8 @@ const deleteReptile = (client: PrismaClient): RequestHandler =>
 export const reptilesController = controller(
   "reptile",
   [
-    { path: "/", method: "post", endpointBuilder: createReptile, skipAuth: true },
-    { path: "/:reptileId", method: "put", endpointBuilder: updateReptile },
+    { path: "/:reptileId", method: "post", endpointBuilder: createReptile, skipAuth: true },
+    { path: "/:reptileId", method: "put", endpointBuilder: updateReptile, skipAuth: true },
     { path: "/", method: "get", endpointBuilder: getAllReptiles, skipAuth: true },
     { path: "/:reptileId", method: "delete", endpointBuilder: deleteReptile, skipAuth: true }
   ]

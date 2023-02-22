@@ -19,17 +19,17 @@ type CreateScheduleBody = {
   sunday: boolean
 }
 
-//TODO: 1) create a schedule 2) list all schedules for reptiles 3) list all schedules for users
+
 
 const createSchedule = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
-
-    const {reptileId, userId, type, description, monday, tuesday, wednesday, thursday, friday, saturday, sunday} = req.body as CreateScheduleBody;
+    const {reptileId} = req.params;
+    const {userId, type, description, monday, tuesday, wednesday, thursday, friday, saturday, sunday} = req.body as CreateScheduleBody;
     if (type === "feed" || type === "record" || type === "clean") {
-
+      //TODO user specific
       const schedule = await client.schedule.create({
         data: {
-          reptileId,
+          reptileId:parseInt(reptileId),
           userId,
           type,
           description,
@@ -50,6 +50,8 @@ const createSchedule = (client: PrismaClient): RequestHandler =>
 
 const getAllReptileSchedules = (client: PrismaClient): RequestHandler =>
    async (req, res) => {
+      //TODO user specific
+      //TODO param or body
     const reptileId = req.params.reptileId;
      const data = await client.schedule.findMany({
       where: {
@@ -61,6 +63,8 @@ const getAllReptileSchedules = (client: PrismaClient): RequestHandler =>
 
 const getAllUserSchedules = (client: PrismaClient): RequestHandler =>
    async (req, res) => {
+      //TODO user specific
+      //TODO param or body
     const userId = req.params.userId;
     console.log("userID: " + userId)
      const data = await client.schedule.findMany({
@@ -74,7 +78,7 @@ const getAllUserSchedules = (client: PrismaClient): RequestHandler =>
 export const scheduleController = controller(
   "schedule",
   [
-    { path: "/", method: "post", endpointBuilder: createSchedule, skipAuth: true },
+    { path: "/:reptileId", method: "post", endpointBuilder: createSchedule, skipAuth: true },
     { path: "/user/:userId", method: "get", endpointBuilder: getAllUserSchedules, skipAuth: true },
     { path: "/reptile/:reptileId", method: "get", endpointBuilder: getAllReptileSchedules, skipAuth: true }
   ]

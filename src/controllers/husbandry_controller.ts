@@ -13,10 +13,10 @@ type CreateHusbandryBody = {
   humidity: number
 }
 
-// TODO: 1) create a husbandry 2) xxxxxlist all husbandries
 
 const createHusbandry = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
+    //TODO User specific
     const {length, weight, temperature, humidity} = req.body as CreateHusbandryBody;
     const {reptileId} = req.params;
     const husbandry = await client.husbandryRecord.create({
@@ -36,6 +36,8 @@ const createHusbandry = (client: PrismaClient): RequestHandler =>
 
 
 const getHusbandry = (client: PrismaClient): RequestHandler =>
+//TODO Param or body
+// TODO user specific
 async (req, res) => {
   const {reptileId} = req.params;
   const data = await client.husbandryRecord.findMany(

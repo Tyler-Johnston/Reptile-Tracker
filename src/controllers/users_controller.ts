@@ -21,7 +21,7 @@ const getMe = (client: PrismaClient): RequestHandler =>
     });
 
     res.json({ user });
-    // TODO get the user
+    // TODO get the user to pass to everyone else?
   }
 
 type CreateUserBody = {

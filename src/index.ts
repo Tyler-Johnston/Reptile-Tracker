@@ -59,10 +59,6 @@ feedingController(app, client);
 scheduleController(app, client);
 husbandryController(app, client);
 
-app.get("/", (req, res) => {
-  res.send(`<h1>Hello, world!</h1>`);
-});
-
 app.listen(parseInt(process.env.PORT || "3000", 10), () => {
   console.log(`App running on port ${process.env.PORT}`);
 });
