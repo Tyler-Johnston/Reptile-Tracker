@@ -11,10 +11,10 @@ type CreateFeedingBody = {
   foodItem: string
 }
 
-// TODO: 1) create a feeding for a reptile 2) list all feedings for reptilesxxxx
 
 const createFeeding = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
+    //TODO user specific
     const {foodItem} = req.body as CreateFeedingBody;
     const {reptileId} = req.params;
     const feeding = await client.feeding.create({
@@ -27,6 +27,8 @@ const createFeeding = (client: PrismaClient): RequestHandler =>
   }
 const getFeeding = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
+    //TODO Do we need to use the param or send a body
+    //TODO USER SPECIFIC
     const {reptileId} = req.params;
 
     const data = await client.feeding.findMany({
