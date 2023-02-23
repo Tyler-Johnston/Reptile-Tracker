@@ -18,6 +18,9 @@ model User {
   passwordHash String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  sessions Session[]
+  reptiles Reptile[]
+  schedules Schedule[]
 }
 
 model Reptile {
@@ -28,6 +31,10 @@ model Reptile {
   sex String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  husbandryRecord HusbandryRecord[]
+  feeding Feeding[]
+  schedules Schedule[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Feeding {
@@ -36,6 +43,7 @@ model Feeding {
   foodItem String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  reptile Reptile @relation(fields: [reptileId], references: [id], onDelete: Cascade)
 }
 
 model HusbandryRecord {
@@ -47,6 +55,7 @@ model HusbandryRecord {
   humidity Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  reptile Reptile @relation(fields: [reptileId], references: [id], onDelete: Cascade)
 }
 
 model Schedule {
@@ -64,4 +73,13 @@ model Schedule {
   sunday Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  reptile Reptile @relation(fields: [reptileId], references: [id], onDelete: Cascade)  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id Int @id @default(autoincrement())
+  token String
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
