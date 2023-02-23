@@ -15,6 +15,10 @@ const createReptile = (client: PrismaClient): RequestHandler =>
   async (req: RequestWithSession, res) => {
     const {species, name, sex} = req.body as CreateReptileBody
 
+    if (!species || !name || !sex) {
+      return res.status(400).json({message: "a species, name, and sex is required"});
+    }
+
     if (req.session) {
       const user = await client.user.findUnique({
          where: { 
