@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { Express, RequestHandler } from "express";
-import { RequestWithJWTBody } from "../dto/jwt";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { controller } from "../lib/controller";
+import { RequestWithJWTBody, RequestWithSession } from "../dto/jwt";
 
 
 type CreateFeedingBody = {
@@ -11,20 +11,34 @@ type CreateFeedingBody = {
   foodItem: string
 }
 
-
 const createFeeding = (client: PrismaClient): RequestHandler =>
-  async (req, res) => {
-    //TODO user specific
+  async (req: RequestWithSession, res) => {
+
     const {foodItem} = req.body as CreateFeedingBody;
     const {reptileId} = req.params;
-    const feeding = await client.feeding.create({
-      data: {
-        reptileId:parseInt(reptileId),
-        foodItem
-      },
+
+    if (req.session) {
+      const user = await client.user.findUnique({
+        where: { 
+         id: req.user.id 
+       },
+         include: {
+           reptiles: true,
+         }
     });
-    res.json({feeding});
+    
+      if (user) {
+        
+      } 
+      else {
+        res.status(404).json({message: "invalid user"});
+      }
+    }
+    else {
+      res.status(401).json({message: "you are not unauthorized"});
+    }
   }
+
 const getFeeding = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
     //TODO Do we need to use the param or send a body

@@ -26,7 +26,7 @@ const createReptile = (client: PrismaClient): RequestHandler =>
          });
 
          if (user) {
-
+          
           if ((species === "ball_python" ||  species === "king_snake" || species === "corn_snake" || species === "redtail_boa") && (sex === "m" || sex === "f")) {
             const reptile = await client.reptile.create({
               data: {
@@ -39,12 +39,8 @@ const createReptile = (client: PrismaClient): RequestHandler =>
             user?.reptiles.push(reptile);
             res.json({ reptile });
          }
-         else {
-          res.status(404).json({message: "invalid user"})
-         }
-
     } else {
-      return res.status(400).json({ message: "Reptile species or sex does not match required type"});
+      res.status(404).json({message: "invalid user"})
     }
     } 
     else {
@@ -77,7 +73,7 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
               if (!reptile) {
                 return res.status(404).json({ message: "Reptile not found" });
               }
-              
+
               const updatedReptile = await client.reptile.update({
                 where: {
                   id: parseInt(reptileId),
@@ -97,7 +93,6 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
            }
 
     }
-
     }
     else {
       return res.status(400).json({ message: "Reptile species or sex does not match required type"});
