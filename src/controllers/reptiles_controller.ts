@@ -1,67 +1,103 @@
 import { PrismaClient } from "@prisma/client";
 import { Express, RequestHandler } from "express";
-import { RequestWithJWTBody } from "../dto/jwt";
+import { RequestWithJWTBody, RequestWithSession } from "../dto/jwt";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { controller } from "../lib/controller";
 
 type CreateReptileBody = {
   species: "ball_python" | "king_snake" | "corn_snake" | "redtail_boa",
-  userId: number
   name: string,
   sex: "m" | "f",
 }
 
 const createReptile = (client: PrismaClient): RequestHandler =>
-  async (req, res) => {
-    const {userId, species, name, sex} = req.body as CreateReptileBody
-    //TODO user specific
-    //NOTE REMOVE THIS: No :reptileId cause auto generated
-    if ((species === "ball_python" ||  species === "king_snake" || species === "corn_snake" || species === "redtail_boa") && (sex === "m" || sex === "f")) {
-    const reptile = await client.reptile.create({
-      data: {
-        userId,
-        species,
-        name,
-        sex,
-      }
-    });
-    res.json({ reptile });
-  } else {
-    return res.status(400).json({ message: "Reptile species or sex does not match required type"});
-  }
+  async (req: RequestWithSession, res) => {
+    const {species, name, sex} = req.body as CreateReptileBody
+
+    if (req.session) {
+      const user = await client.user.findUnique({
+         where: { 
+          id: req.user.id 
+        },
+          include: {
+            reptiles: true,
+          }
+         });
+
+         if (user) {
+
+          if ((species === "ball_python" ||  species === "king_snake" || species === "corn_snake" || species === "redtail_boa") && (sex === "m" || sex === "f")) {
+            const reptile = await client.reptile.create({
+              data: {
+                userId: req.user.id,
+                species,
+                name,
+                sex,
+              }
+            });
+            user?.reptiles.push(reptile);
+            res.json({ reptile });
+         }
+         else {
+          res.status(404).json({message: "invalid user"})
+         }
+
+    } else {
+      return res.status(400).json({ message: "Reptile species or sex does not match required type"});
+    }
+    } 
+    else {
+      res.status(401).json({message: "you are not unauthorized"});
+    }
   }
 
 const updateReptile = (client: PrismaClient): RequestHandler =>
-   async (req, res) => {
-    //TODO user specific
-    //TODO param or body
-    const {userId, species, name, sex} = req.body as CreateReptileBody;
+   async (req: RequestWithSession, res) => {
+
+    const {species, name, sex} = req.body as CreateReptileBody;
     const {reptileId} = req.params
 
-    if ((species === "ball_python" ||  species === "king_snake" || species === "corn_snake" || species === "redtail_boa" || species === undefined) && (sex === "m" || sex === "f" || sex === undefined)) {
-      const reptile = await client.reptile.findFirst({
-        where: {
-          id: parseInt(reptileId)
-        },
-      });
+    if (req.session) {
+      const user = await client.user.findUnique({
+        where: { 
+         id: req.user.id 
+       },
+         include: {
+           reptiles: true,
+         }
+        });
+          if (user) {
+            if ((species === "ball_python" ||  species === "king_snake" || species === "corn_snake" || species === "redtail_boa" || species === undefined) && (sex === "m" || sex === "f" || sex === undefined)) {
 
-      if (reptile === null) {
-        return res.status(404).json({ message: "Reptile not found" });
-      }
-  
-      const updatedReptile = await client.reptile.update({
-        where: {
-          id: parseInt(reptileId)
-        },
-        data: {
-          userId: userId ?? reptile.userId,
-          species: species ?? reptile.species,
-          name: name ?? reptile.name,
-          sex: sex ?? reptile.sex
-        },
-      });
-      res.json({updatedReptile});
+              const reptile = user.reptiles.find(
+                (reptile) => reptile.id === parseInt(reptileId)
+              );
+          
+              if (!reptile) {
+                return res.status(404).json({ message: "Reptile not found" });
+              }
+              
+              const updatedReptile = await client.reptile.update({
+                where: {
+                  id: parseInt(reptileId),
+                },
+                data: {
+                  userId: req.user.id,
+                  species: species ?? reptile.species,
+                  name: name ?? reptile.name,
+                  sex: sex ?? reptile.sex
+                }
+              });
+              res.json({updatedReptile})
+
+           }
+           else {
+            res.status(404).json({message: "invalid user"})
+           }
+
+    }
+
     }
     else {
       return res.status(400).json({ message: "Reptile species or sex does not match required type"});
@@ -69,44 +105,68 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
    }
 
 const getAllReptiles = (client: PrismaClient): RequestHandler =>
-   async (req, res) => {
-    //TODO param or body
-    //TODO user specific
-     const data = await client.reptile.findMany();
-     res.json({data});
+   async (req: RequestWithSession, res) => {
+
+    if (req.session) {
+      const user = await client.user.findUnique({
+         where: { 
+          id: req.user.id 
+        },
+          include: {
+            reptiles: true,
+          }
+         });
+
+         if (user) {
+          const reptiles = user?.reptiles;
+          res.json({reptiles})
+         }
+         else {
+          res.status(404).json({message: "invalid user"})
+         }
+    }
+    else {
+      res.status(401).json({message: "you are not unauthorized"});
+    }
    }
 
 const deleteReptile = (client: PrismaClient): RequestHandler =>
-   async (req, res) => {
+   async (req: RequestWithSession, res) => {
+
     const {reptileId} = req.params
-//TODO param or body
-//TODO user specific
-    const reptile = await client.reptile.findFirst({
-      where: {
-        id: parseInt(reptileId),
-      },
-    });
+    if (req.session) {
+      const user = await client.user.findUnique({
+        where: { 
+         id: req.user.id 
+       },
+         include: {
+           reptiles: true,
+         }
+        });
 
-    if (reptile === null) {
-      return res.status(404).json({ message: "Reptile not found" });
+        if (user) {
+          const deletedReptile = await client.reptile.delete({
+            where: {
+              id: parseInt(reptileId)
+            }
+          });
+          res.json({deletedReptile})
+         }
+         else {
+          res.status(404).json({message: "invalid user"})
+         }
     }
-
-    const deletedReptile = await client.reptile.delete({
-      //TODO user specifc VERY IMPORTANT ON THIS ONE
-      //TODO param or body
-      where: {
-        id: parseInt(reptileId),
-      },
-    });
-    res.json({ deletedReptile });
-   }
+    else {
+      res.status(401).json({message: "you are not unauthorized"});
+    }
+  }
 
 export const reptilesController = controller(
   "reptile",
   [
-    { path: "/", method: "post", endpointBuilder: createReptile, skipAuth: true },
-    { path: "/:reptileId", method: "put", endpointBuilder: updateReptile, skipAuth: true },
-    { path: "/", method: "get", endpointBuilder: getAllReptiles, skipAuth: true },
-    { path: "/:reptileId", method: "delete", endpointBuilder: deleteReptile, skipAuth: true }
+    { path: "/", method: "post", endpointBuilder: createReptile, skipAuth: false },
+    { path: "/:reptileId", method: "put", endpointBuilder: updateReptile, skipAuth: false },
+    { path: "/", method: "get", endpointBuilder: getAllReptiles, skipAuth: false },
+    { path: "/:reptileId", method: "delete", endpointBuilder: deleteReptile, skipAuth: false }
   ]
 )

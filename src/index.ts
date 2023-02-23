@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from 'uuid';
 import { usersController } from "./controllers/users_controller";
 import { reptilesController } from "./controllers/reptiles_controller";
 import { feedingController } from "./controllers/feeding_controller";
@@ -29,8 +30,13 @@ app.post("/sessions",  async (req, res) => {
   const user = await client.user.findFirst({
     where: {
       email,
+    },
+    include: {
+      sessions: true,
+      reptiles: true
     }
   });
+
   if (!user) {
     res.status(404).json({ message: "Invalid email or password" });
     return;
@@ -41,16 +47,20 @@ app.post("/sessions",  async (req, res) => {
     res.status(404).json({ message: "Invalid email or password" });
     return;
   }
-
-  const token = jwt.sign({
-    userId: user.id
-  }, process.env.ENCRYPTION_KEY!!, {
-    expiresIn: '10m'
-  });
-  res.json({
-    user,
-    token
+  const token = uuidv4();
+  const session = await client.session.create({
+    data: {
+      userId: user.id,
+      token,
+    }
   })
+
+  res.cookie("session-token", session.token, {
+    httpOnly: true,
+    maxAge: 60000 * 10
+  })
+
+  res.json({user});
 });
 
 usersController(app, client);
