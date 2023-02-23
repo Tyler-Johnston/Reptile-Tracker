@@ -26,7 +26,7 @@ const createReptile = (client: PrismaClient): RequestHandler =>
          });
 
          if (user) {
-          
+
           if ((species === "ball_python" ||  species === "king_snake" || species === "corn_snake" || species === "redtail_boa") && (sex === "m" || sex === "f")) {
             const reptile = await client.reptile.create({
               data: {
@@ -66,9 +66,11 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
           if (user) {
             if ((species === "ball_python" ||  species === "king_snake" || species === "corn_snake" || species === "redtail_boa" || species === undefined) && (sex === "m" || sex === "f" || sex === undefined)) {
 
-              const reptile = user.reptiles.find(
-                (reptile) => reptile.id === parseInt(reptileId)
-              );
+              const reptile = await client.reptile.findUnique({
+                where: {
+                  id: parseInt(reptileId)
+                }
+              });
           
               if (!reptile) {
                 return res.status(404).json({ message: "Reptile not found" });
@@ -89,13 +91,13 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
 
            }
            else {
-            res.status(404).json({message: "invalid user"})
+            res.status(404).json({message: "Reptile species or sex does not match required type"});
            }
 
     }
     }
     else {
-      return res.status(400).json({ message: "Reptile species or sex does not match required type"});
+      return res.status(401).json({ message: "you are not authorized"});
     }
    }
 
