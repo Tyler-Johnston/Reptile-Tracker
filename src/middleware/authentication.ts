@@ -1,16 +1,26 @@
 import { RequestHandler } from "express";
-import { RequestWithJWTBody, JWTBody } from "../dto/jwt";
+import { RequestWithJWTBody, JWTBody, RequestWithSession } from "../dto/jwt";
+import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 
-export const authenticationMiddleware: RequestHandler = async (req: RequestWithJWTBody, res, next) => {
-  // TODO parse token and find user
-  const token = req.headers.authorization?.split(" ")[1];
-  try {
-    const jwtBody = jwt.verify(token || '', process.env.ENCRYPTION_KEY!!) as JWTBody;
-    req.jwtBody = jwtBody;
-  } catch (error) {
-    console.log("token failed validation");
-  } finally {
-    next();
+const client = new PrismaClient();
+
+export const authenticationMiddleware: RequestHandler = async (req: RequestWithSession, res, next) => {
+
+  const sessionToken = req.cookies["session-token"];
+  if (sessionToken) {
+    const session = await client.session.findFirst({
+      where: {
+        token: sessionToken
+      },
+      include: {
+        user: true
+      }
+    });
+    if (session) {
+      req.session = session;
+      req.user = session.user;
+    }
   }
+  next();
 }

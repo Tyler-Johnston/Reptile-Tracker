@@ -1,27 +1,20 @@
 import { PrismaClient } from "@prisma/client";
 import { Express, RequestHandler } from "express";
-import { RequestWithJWTBody } from "../dto/jwt";
+import { RequestWithJWTBody, RequestWithSession } from "../dto/jwt";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { controller } from "../lib/controller";
+import { v4 as uuidv4 } from 'uuid';
 
-//TODO: CHECK IF THIS IS NEEDED
+
 const getMe = (client: PrismaClient): RequestHandler =>
-  async (req: RequestWithJWTBody, res) => {
-    const userId = req.jwtBody?.userId;
-    if (!userId) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
+  async (req: RequestWithSession, res) => {
+
+    if (req.session) {
+      res.json({user: req.user})
+    } else {
+      res.status(401).json({message: "you are not unauthorized"});
     }
-
-    const user = await client.user.findFirst({
-      where: {
-        id: userId
-      }
-    });
-
-    res.json({ user });
-    // TODO get the user to pass to everyone else?
   }
 
 type CreateUserBody = {
@@ -35,29 +28,43 @@ const createUser = (client: PrismaClient): RequestHandler =>
   async (req, res) => {
     const {firstName, lastName, email, password} = req.body as CreateUserBody;
     const passwordHash = await bcrypt.hash(password, 10);
+
+    // check if an email is already in use
+    const existingEmail = await client.user.findFirst({
+      where: {
+        email,
+      }
+    });
+
+    if (existingEmail) {
+      return res.status(404).json({message: "this email is already in use"});
+    }
+
     const user = await client.user.create({
       data: {
         firstName,
         lastName,
         email,
         passwordHash,
+        sessions: {
+          create: [{
+            token: uuidv4()
+          }]
+        }
       },
     });
 
-    const token = jwt.sign({
-      userId: user.id
-    }, process.env.ENCRYPTION_KEY!!, {
-      expiresIn: '1m'
+    res.cookie("session-token", user.sessions[0].token, {
+      httpOnly: true,
+      maxAge: 60000 * 10
     });
-
-    res.json({ user, token });
+    res.json({ user });
   }
-
 
 export const usersController = controller(
   "users",
   [
-    { path: "/me", endpointBuilder: getMe, method: "get" },
+    { path: "/me", endpointBuilder: getMe, method: "get", skipAuth: false},
     { path: "/", method: "post", endpointBuilder: createUser, skipAuth: true }
   ]
 )

@@ -104,7 +104,7 @@ const deleteReptile = (client: PrismaClient): RequestHandler =>
 export const reptilesController = controller(
   "reptile",
   [
-    { path: "/:reptileId", method: "post", endpointBuilder: createReptile, skipAuth: true },
+    { path: "/", method: "post", endpointBuilder: createReptile, skipAuth: true },
     { path: "/:reptileId", method: "put", endpointBuilder: updateReptile, skipAuth: true },
     { path: "/", method: "get", endpointBuilder: getAllReptiles, skipAuth: true },
     { path: "/:reptileId", method: "delete", endpointBuilder: deleteReptile, skipAuth: true }
