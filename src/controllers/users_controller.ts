@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { Express, RequestHandler } from "express";
 import { RequestWithJWTBody, RequestWithSession } from "../dto/jwt";
 import bcrypt from "bcrypt";
@@ -6,12 +6,19 @@ import jwt from "jsonwebtoken";
 import { controller } from "../lib/controller";
 import { v4 as uuidv4 } from 'uuid';
 
-
 const getMe = (client: PrismaClient): RequestHandler =>
   async (req: RequestWithSession, res) => {
 
     if (req.session) {
-      res.json({user: req.user})
+      const user = await client.user.findUnique({
+         where: { 
+          id: req.user.id
+         },
+         include: {
+          reptiles: true,
+         }
+         });
+      res.json({ user })
     } else {
       res.status(401).json({message: "you are not unauthorized"});
     }
@@ -52,8 +59,11 @@ const createUser = (client: PrismaClient): RequestHandler =>
           }]
         }
       },
+      include: { 
+        sessions: true
+       }
     });
-
+    
     res.cookie("session-token", user.sessions[0].token, {
       httpOnly: true,
       maxAge: 60000 * 10
@@ -67,4 +77,4 @@ export const usersController = controller(
     { path: "/me", endpointBuilder: getMe, method: "get", skipAuth: false},
     { path: "/", method: "post", endpointBuilder: createUser, skipAuth: true }
   ]
-)
+);
