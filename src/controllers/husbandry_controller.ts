@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { Express, RequestHandler } from "express";
-import { RequestWithJWTBody } from "../dto/jwt";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { controller } from "../lib/controller";
+import { RequestWithJWTBody, RequestWithSession } from "../dto/jwt";
 
 type CreateHusbandryBody = {
   reptileId: number,
@@ -15,47 +15,69 @@ type CreateHusbandryBody = {
 
 
 const createHusbandry = (client: PrismaClient): RequestHandler =>
-  async (req, res) => {
-    //TODO User specific
+  async (req: RequestWithSession, res) => {
     const {length, weight, temperature, humidity} = req.body as CreateHusbandryBody;
     const {reptileId} = req.params;
-    const husbandry = await client.husbandryRecord.create({
-      data: {
-        reptileId:parseInt(reptileId),
-        length,
-        weight,
-        temperature,
-        humidity
-      },
-    });
-    
-    res.json({husbandry});
+
+    if (req.session) {
+
+      if (!length || !weight || !temperature || !humidity) {
+        return res.status(400).json({message: "you are missing the required fields: length, weight, temperature, and humidity"});
+      }
+
+      const reptile = await client.reptile.findUnique({
+        where: {
+          id: parseInt(reptileId),
+        }
+      });
+
+      if (!reptile) {
+        return res.status(404).json({ message: "Reptile not found" });
+      }
+
+      const husbandry = await client.husbandryRecord.create({
+        data: {
+          reptileId:parseInt(reptileId),
+          length,
+          weight,
+          temperature,
+          humidity
+        },
+      });
+      
+      res.json({husbandry});
+
+    } else {
+      res.status(401).json({message: "you are not authorized"});
+    }
     
   }
 
 
 
 const getHusbandry = (client: PrismaClient): RequestHandler =>
-//TODO Param or body
-// TODO user specific
-async (req, res) => {
+
+async (req: RequestWithSession, res) => {
   const {reptileId} = req.params;
-  const data = await client.husbandryRecord.findMany(
-    {where: {
-      reptileId:parseInt(reptileId)
-    }}
-  );
-  res.json({data});
+
+  if (req.session) {
+    const data = await client.husbandryRecord.findMany({
+      where: {
+        reptileId:parseInt(reptileId)
+      }}
+    );
+
+    res.json({data});
+
+  } else {
+    res.status(401).json({message: "you are not authorized"});
+  }
 }
-
-
-
-
 
 export const husbandryController = controller(
   "husbandry",
   [
-    { path: "/:reptileId", method: "post", endpointBuilder: createHusbandry, skipAuth: true },
-    { path: "/:reptileId", method: "get", endpointBuilder: getHusbandry, skipAuth: true }
+    { path: "/:reptileId", method: "post", endpointBuilder: createHusbandry, skipAuth: false },
+    { path: "/:reptileId", method: "get", endpointBuilder: getHusbandry, skipAuth: false }
   ]
 )

@@ -16,6 +16,8 @@ const getMe = (client: PrismaClient): RequestHandler =>
          },
          include: {
           reptiles: true,
+          sessions: true,
+          schedules: true
          }
          });
       res.json({ user })
