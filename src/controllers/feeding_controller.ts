@@ -46,7 +46,6 @@ const createFeeding = (client: PrismaClient): RequestHandler =>
     else {
       res.status(401).json({message: "you are not authorized"});
     }
-
   }
 
 const getFeeding = (client: PrismaClient): RequestHandler =>
@@ -55,14 +54,15 @@ const getFeeding = (client: PrismaClient): RequestHandler =>
 
     if (req.session) {
 
-      const reptile = await client.reptile.findUnique({
+      const reptile = await client.reptile.findFirst({
         where: {
           id: parseInt(reptileId),
+          userId: req.user.id
         }
-      });
+      })
 
       if (!reptile) {
-        return res.status(404).json({ message: "Reptile not found" });
+        return res.status(404).json({message: "you are not authorized"})
       }
 
       const feedings = await client.feeding.findMany({
@@ -77,7 +77,7 @@ const getFeeding = (client: PrismaClient): RequestHandler =>
 
       res.status(200).json({feedings});
     } else {
-      res.status(401).json({message: "you are not authorized"});
+      res.status(401).json({message: "you are not signed in"});
     }
   }
 
