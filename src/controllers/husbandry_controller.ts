@@ -1,9 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { Express, RequestHandler } from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { RequestHandler } from "express";
 import { controller } from "../lib/controller";
-import { RequestWithJWTBody, RequestWithSession } from "../dto/jwt";
+import { RequestWithSession } from "../dto/jwt";
 
 type CreateHusbandryBody = {
   reptileId: number,
@@ -47,7 +45,7 @@ const createHusbandry = (client: PrismaClient): RequestHandler =>
       res.json({husbandry});
 
     } else {
-      res.status(401).json({message: "you are not authorized"});
+      res.status(400).json({message: "you are not signed in"});
     }
     
   }
@@ -79,7 +77,7 @@ async (req: RequestWithSession, res) => {
     res.json({data});
 
   } else {
-    res.status(401).json({message: "you are not signed in"});
+    res.status(400).json({message: "you are not signed in"});
   }
 }
 

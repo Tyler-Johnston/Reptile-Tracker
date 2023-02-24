@@ -48,7 +48,7 @@ const createReptile = (client: PrismaClient): RequestHandler =>
     }
     } 
     else {
-      res.status(401).json({message: "you are not signed in"});
+      res.status(400).json({message: "you are not signed in"});
     }
   }
 
@@ -103,7 +103,7 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
     }
     }
     else {
-      return res.status(401).json({ message: "you are not signed in"});
+      return res.status(400).json({ message: "you are not signed in"});
     }
    }
 
@@ -129,7 +129,7 @@ const getAllReptiles = (client: PrismaClient): RequestHandler =>
          }
     }
     else {
-      res.status(401).json({message: "you are not signed in"});
+      res.status(400).json({message: "you are not signed in"});
     }
    }
 
