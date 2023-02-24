@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { RequestHandler } from "express";
 import { controller } from "../lib/controller";
-import { RequestWithJWTBody, RequestWithSession } from "../dto/jwt";
+import { RequestWithSession } from "../dto/jwt";
 
 
 type CreateFeedingBody = {
@@ -37,12 +37,10 @@ const createFeeding = (client: PrismaClient): RequestHandler =>
           reptileId: parseInt(reptileId)
         }
       })
-
       res.json({ feeding })
-
     }
     else {
-      res.status(401).json({message: "you are not authorized"});
+      return res.status(400).json({message: "you are not signed in"});
     }
   }
 
@@ -75,7 +73,7 @@ const getFeeding = (client: PrismaClient): RequestHandler =>
 
       res.status(200).json({feedings});
     } else {
-      res.status(401).json({message: "you are not signed in"});
+      res.status(400).json({message: "you are not signed in"});
     }
   }
 

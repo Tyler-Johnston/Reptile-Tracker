@@ -21,7 +21,7 @@ const getMe = (client: PrismaClient): RequestHandler =>
          });
       res.json({ user })
     } else {
-      res.status(401).json({message: "you are not authorized"});
+      res.status(400).json({message: "you are not signed in"});
     }
   }
 
@@ -46,7 +46,7 @@ const createUser = (client: PrismaClient): RequestHandler =>
         }
       });
       if (existingEmail) {
-        return res.status(404).json({message: "this email is already in use"});
+        return res.status(400).json({message: "this email is already in use"});
       }
     }
 
