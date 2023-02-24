@@ -79,6 +79,7 @@ const getAllReptileSchedules = (client: PrismaClient): RequestHandler =>
         userId: req.user.id
       }
     })
+    console.log(req.user.id);
     if (!reptile){
       return res.status(401).json({message: "you are not authorized?"});
     }
