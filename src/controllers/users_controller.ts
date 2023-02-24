@@ -38,15 +38,17 @@ const createUser = (client: PrismaClient): RequestHandler =>
     const {firstName, lastName, email, password} = req.body as CreateUserBody;
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // check if an email is already in use
-    const existingEmail = await client.user.findFirst({
-      where: {
-        email,
+    const userCount = await client.user.count();
+    if (userCount > 1) {
+      // check if an email is already in use
+      const existingEmail = await client.user.findFirst({
+        where: {
+          email,
+        }
+      });
+      if (existingEmail) {
+        return res.status(404).json({message: "this email is already in use"});
       }
-    });
-
-    if (existingEmail) {
-      return res.status(404).json({message: "this email is already in use"});
     }
 
     const user = await client.user.create({
