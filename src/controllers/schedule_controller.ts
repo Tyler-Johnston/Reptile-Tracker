@@ -17,7 +17,6 @@ type CreateScheduleBody = {
   sunday: boolean
 }
 
-
 const createSchedule = (client: PrismaClient): RequestHandler =>
   async (req: RequestWithSession, res) => {
     const {reptileId} = req.params;
@@ -66,7 +65,7 @@ const createSchedule = (client: PrismaClient): RequestHandler =>
       }
 
     } else {
-      return res.status(401).json({message: "you are not signed in"});
+      return res.status(400).json({message: "you are not signed in"});
     }
   }
 
@@ -94,7 +93,7 @@ const getAllReptileSchedules = (client: PrismaClient): RequestHandler =>
         });
          res.json({schedules});
     } else {
-      return res.status(401).json({message: "you are not signed in"});
+      return res.status(400).json({message: "you are not signed in"});
     }
    }
 
@@ -110,7 +109,7 @@ const getAllUserSchedules = (client: PrismaClient): RequestHandler =>
          res.json({schedules});
 
     } else {
-      return res.status(401).json({message: "you are not signed in"});
+      return res.status(400).json({message: "you are not signed in"});
     }
 
    }

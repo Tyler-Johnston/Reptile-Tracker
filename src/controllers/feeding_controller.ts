@@ -1,7 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Express, RequestHandler } from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { RequestHandler } from "express";
 import { controller } from "../lib/controller";
 import { RequestWithJWTBody, RequestWithSession } from "../dto/jwt";
 
