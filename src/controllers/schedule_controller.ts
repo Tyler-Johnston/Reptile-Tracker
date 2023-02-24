@@ -73,6 +73,14 @@ const createSchedule = (client: PrismaClient): RequestHandler =>
 const getAllReptileSchedules = (client: PrismaClient): RequestHandler =>
    async (req: RequestWithSession, res) => {
     const {reptileId} = req.params;
+    const reptile = client.reptile.findFirst({
+      where:{
+        id: parseInt(reptileId)
+      }
+    })
+    if(req.user.id != reptile.userId){
+      res.status(401).json({message: "you are not unauthorized"});
+    }
 
     if (req.session) {
       const schedules = await client.schedule.findMany({

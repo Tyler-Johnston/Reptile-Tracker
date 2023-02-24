@@ -57,7 +57,7 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
 
     const {species, name, sex} = req.body as CreateReptileBody;
     const {reptileId} = req.params
-
+    
     if (req.session) {
       const user = await client.user.findUnique({
         where: { 
@@ -75,11 +75,13 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
                   id: parseInt(reptileId)
                 }
               });
-          
+              
               if (!reptile) {
                 return res.status(404).json({ message: "Reptile not found" });
               }
-
+              if(req.user.id != reptile.userId){
+                return res.status(401).json({message: "you are not unauthorized"});
+              }
               const updatedReptile = await client.reptile.update({
                 where: {
                   id: parseInt(reptileId),
@@ -95,7 +97,7 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
 
            }
            else {
-            res.status(404).json({message: "Reptile species or sex does not match required type"});
+            return res.status(404).json({message: "Reptile species or sex does not match required type"});
            }
 
     }
@@ -146,6 +148,17 @@ const deleteReptile = (client: PrismaClient): RequestHandler =>
         });
 
         if (user) {
+          const reptileToDel = await client.reptile.findFirst({
+            where: {
+              id: parseInt(reptileId)
+            }
+          });
+          if (!reptileToDel){
+            return res.status(404).json({message: "Not Found"});
+          }
+          if(req.user.id != reptileToDel?.userId){
+            return res.status(401).json({message: "you are not unauthorized"});
+          }
           const deletedReptile = await client.reptile.delete({
             where: {
               id: parseInt(reptileId)
@@ -154,11 +167,11 @@ const deleteReptile = (client: PrismaClient): RequestHandler =>
           res.json({deletedReptile})
          }
          else {
-          res.status(404).json({message: "invalid user"})
+          return res.status(404).json({message: "invalid user"})
          }
     }
     else {
-      res.status(401).json({message: "you are not unauthorized"});
+      return res.status(401).json({message: "you are not logged in"});
     }
   }
 
