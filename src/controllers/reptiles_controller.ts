@@ -1,8 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { Express, RequestHandler } from "express";
-import { RequestWithJWTBody, RequestWithSession } from "../dto/jwt";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { RequestHandler } from "express";
+import { RequestWithSession } from "../dto/jwt";
 import { controller } from "../lib/controller";
 
 type CreateReptileBody = {
