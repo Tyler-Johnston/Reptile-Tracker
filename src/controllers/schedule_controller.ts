@@ -66,7 +66,7 @@ const createSchedule = (client: PrismaClient): RequestHandler =>
       }
 
     } else {
-      return res.status(401).json({message: "you are not authorized"});
+      return res.status(401).json({message: "you are not signed in"});
     }
   }
 
@@ -75,6 +75,18 @@ const getAllReptileSchedules = (client: PrismaClient): RequestHandler =>
     const {reptileId} = req.params;
 
     if (req.session) {
+
+      const reptile = await client.reptile.findFirst({
+        where: {
+          id: parseInt(reptileId),
+          userId: req.user.id
+        }
+      })
+
+      if (!reptile) {
+        return res.status(404).json({message: "you are not authorized"})
+      }
+
       const schedules = await client.schedule.findMany({
         where: {
           reptileId: parseInt(reptileId)
@@ -82,7 +94,7 @@ const getAllReptileSchedules = (client: PrismaClient): RequestHandler =>
         });
          res.json({schedules});
     } else {
-      return res.status(401).json({message: "you are not authorized"});
+      return res.status(401).json({message: "you are not signed in"});
     }
    }
 
@@ -98,7 +110,7 @@ const getAllUserSchedules = (client: PrismaClient): RequestHandler =>
          res.json({schedules});
 
     } else {
-      return res.status(401).json({message: "you are not authorized"});
+      return res.status(401).json({message: "you are not signed in"});
     }
 
    }

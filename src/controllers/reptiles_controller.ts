@@ -44,11 +44,11 @@ const createReptile = (client: PrismaClient): RequestHandler =>
             res.json({ reptile });
          }
     } else {
-      res.status(404).json({message: "invalid user"})
+      res.status(404).json({message: "invalid user"});
     }
     } 
     else {
-      res.status(401).json({message: "you are not authorized"});
+      res.status(401).json({message: "you are not signed in"});
     }
   }
 
@@ -80,7 +80,7 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
                 return res.status(404).json({ message: "Reptile not found" });
               }
               if(req.user.id != reptile.userId){
-                return res.status(401).json({message: "you are not unauthorized"});
+                return res.status(401).json({message: "you are not authorized"});
               }
               const updatedReptile = await client.reptile.update({
                 where: {
@@ -103,7 +103,7 @@ const updateReptile = (client: PrismaClient): RequestHandler =>
     }
     }
     else {
-      return res.status(401).json({ message: "you are not authorized"});
+      return res.status(401).json({ message: "you are not signed in"});
     }
    }
 
@@ -129,7 +129,7 @@ const getAllReptiles = (client: PrismaClient): RequestHandler =>
          }
     }
     else {
-      res.status(401).json({message: "you are not unauthorized"});
+      res.status(401).json({message: "you are not signed in"});
     }
    }
 
@@ -157,7 +157,7 @@ const deleteReptile = (client: PrismaClient): RequestHandler =>
             return res.status(404).json({message: "Not Found"});
           }
           if(req.user.id != reptileToDel?.userId){
-            return res.status(401).json({message: "you are not unauthorized"});
+            return res.status(401).json({message: "you are not authorized"});
           }
           const deletedReptile = await client.reptile.delete({
             where: {

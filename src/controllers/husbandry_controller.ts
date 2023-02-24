@@ -13,7 +13,6 @@ type CreateHusbandryBody = {
   humidity: number
 }
 
-
 const createHusbandry = (client: PrismaClient): RequestHandler =>
   async (req: RequestWithSession, res) => {
     const {length, weight, temperature, humidity} = req.body as CreateHusbandryBody;
@@ -53,14 +52,24 @@ const createHusbandry = (client: PrismaClient): RequestHandler =>
     
   }
 
-
-
 const getHusbandry = (client: PrismaClient): RequestHandler =>
 
 async (req: RequestWithSession, res) => {
   const {reptileId} = req.params;
 
   if (req.session) {
+
+    const reptile = await client.reptile.findFirst({
+      where: {
+        id: parseInt(reptileId),
+        userId: req.user.id
+      }
+    })
+
+    if (!reptile) {
+      return res.status(404).json({message: "you are not authorized"})
+    }
+
     const data = await client.husbandryRecord.findMany({
       where: {
         reptileId:parseInt(reptileId)
@@ -70,7 +79,7 @@ async (req: RequestWithSession, res) => {
     res.json({data});
 
   } else {
-    res.status(401).json({message: "you are not authorized"});
+    res.status(401).json({message: "you are not signed in"});
   }
 }
 
