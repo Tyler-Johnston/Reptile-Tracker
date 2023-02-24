@@ -1,8 +1,7 @@
-import { PrismaClient, User } from "@prisma/client";
-import { Express, RequestHandler } from "express";
-import { RequestWithJWTBody, RequestWithSession } from "../dto/jwt";
+import { PrismaClient } from "@prisma/client";
+import { RequestHandler } from "express";
+import { RequestWithSession } from "../dto/jwt";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { controller } from "../lib/controller";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,7 +21,7 @@ const getMe = (client: PrismaClient): RequestHandler =>
          });
       res.json({ user })
     } else {
-      res.status(401).json({message: "you are not unauthorized"});
+      res.status(401).json({message: "you are not authorized"});
     }
   }
 
