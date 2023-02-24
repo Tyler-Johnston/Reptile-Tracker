@@ -48,7 +48,7 @@ const createReptile = (client: PrismaClient): RequestHandler =>
     }
     } 
     else {
-      res.status(401).json({message: "you are not unauthorized"});
+      res.status(401).json({message: "you are not authorized"});
     }
   }
 
