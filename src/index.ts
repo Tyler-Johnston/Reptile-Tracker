@@ -3,7 +3,7 @@ import { PrismaClient, User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
+import cors from "cors";
 import { v4 as uuidv4 } from 'uuid';
 import { usersController } from "./controllers/users_controller";
 import { reptilesController } from "./controllers/reptiles_controller";
@@ -15,6 +15,7 @@ dotenv.config();
 const client = new PrismaClient();
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
