@@ -58,7 +58,7 @@ app.post("/sessions",  async (req, res) => {
 
   res.cookie("session-token", session.token, {
     httpOnly: true,
-    maxAge: 60000 * 10
+    maxAge: 3600000
   })
 
   res.json({user});
