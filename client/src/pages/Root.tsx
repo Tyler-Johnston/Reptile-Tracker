@@ -5,7 +5,7 @@ export const Root = () => {
 
   return (
     <>
-      <nav>{name}</nav>
+      <nav className="navbar">{name}</nav>
       <Outlet />
     </>
   )
