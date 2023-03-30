@@ -7,8 +7,6 @@ export const SignUp = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const api = useApi();
-  const setToken = useContext(AuthContext);
 
   async function signUp() {
     console.log("it clicked buton");
@@ -18,12 +16,16 @@ export const SignUp = () => {
       email,
       password
     }
-    // const resultBody = await api.post(`${import.meta.env.DATABASE_URL}/users`, body)
-    const resultBody = await api.post("http://localhost:8000/users", body)
 
-    if (resultBody.token) {
-      setToken(resultBody.token)
-    }
+    const result = await fetch("http://localhost:8000/users", {
+      method: 'post',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify(body)
+    });
+
   }
 
   return (
