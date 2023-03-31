@@ -8,9 +8,9 @@
 import { useContext, useState } from "react";
 
 export const Dashboard = () => {
-  const [species, setSpecies] = useState("");
+  const [species, setSpecies] = useState("ball_python");
   const [name, setName] = useState("");
-  const [sex, setSex] = useState("");
+  const [sex, setSex] = useState("m");
 
   async function createReptile() {
     
@@ -19,6 +19,10 @@ export const Dashboard = () => {
       name,
       sex
     }
+
+    console.log("species: " + body.species)
+    console.log("name: " + body.name)
+    console.log("sex: " + body.sex)
 
     const result = await fetch("http://localhost:8000/reptile", {
       method: 'post',
