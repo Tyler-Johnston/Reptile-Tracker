@@ -1,4 +1,3 @@
-// 1. I should see all of the schedules for my user for the day of the week it is (for example, if it is Monday then I should only see the schedules that have me doing something on Monday.)
 // 3. When selecting a reptile the app should navigate to the Reptile page
 
 
@@ -153,7 +152,7 @@ export const Dashboard = () => {
             <p key={index}>{task}</p>
             ))}
           </div>
-          
+
           {/* Log out */}
           <button type="button" onClick={logout}>Log out</button>
         </div>
