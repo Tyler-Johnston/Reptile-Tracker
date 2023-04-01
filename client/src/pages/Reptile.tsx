@@ -14,12 +14,19 @@ interface Schedule {
   sunday: boolean,
 }
 
+interface Husbandry {
+  id: number,
+  length: number,
+  weight: number,
+  temperature: number,
+  humidity: number
+}
+
 export const Reptile = () => {
   const { id } = useParams();
-  const [schedules, setSchedules] = useState<Schedule[]>([])
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [husbandries, setHusbandry] = useState<Husbandry[]>([]);
   
-
-
   async function getAllFeedings() {
 
 
@@ -38,18 +45,34 @@ export const Reptile = () => {
 
     setSchedules([]); // clear the tasks before appending more to it
     scheduleData.schedules.forEach((schedule: Schedule) => {
-        setSchedules(schedules => [...schedules, schedule])
+        setSchedules(schedules => [...schedules, schedule]);
     });
   }
 
   async function getAllHusbandries() {
-
+    const result = await fetch(`http://localhost:8000/husbandry/${id}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    });
+    const husbandryData = await result.json();
+    
+    setHusbandry([]); // clear the tasks before appending more to it
+    husbandryData.data.forEach((husbandries: Husbandry) => {
+        setHusbandry(husbandry => [...husbandry, husbandries]);
+    });
   }
 
   useEffect(() => {
     getAllSchedules();
+  }, [])
 
-  }, [schedules])
+  useEffect(() => {
+    getAllHusbandries();
+  }, [])
+
 
     return (
       <div>
@@ -68,6 +91,17 @@ export const Reptile = () => {
             <p>{schedule.sunday ? "sunday" : ""}</p>
           </div>
         )) : "no schedules set for this reptile"}
+
+          {/* View all Husbandries */}
+          {husbandries ? husbandries.map((husbandry : Husbandry) => (
+          <div key={husbandry.id}>
+            <h3>Husbandry {husbandry.id}</h3>
+            <p>length: {husbandry.length}</p>
+            <p>weight: {husbandry.weight}</p>
+            <p>temp: {husbandry.temperature}</p>
+            <p>humidity: {husbandry.humidity}</p>
+          </div>
+        )) : "no husbandries set for this reptile"}
       </div>
     )
   }

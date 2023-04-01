@@ -69,6 +69,7 @@ export const Dashboard = () => {
       },
       credentials: "include"
     });
+    navigate("..")
   }
 
   async function deleteReptile(id: number) {
@@ -106,11 +107,15 @@ export const Dashboard = () => {
   }
 
   useEffect(() => {
-    getAllReptiles();
-  }, [reptiles]);
+    if (reptiles) {
+      getAllReptiles();
+    }
+  }, []);
 
   useEffect(() => {
-    getTodaySchedule();
+    if (tasks) {
+      getTodaySchedule();
+    }
   }, []);
 
   return (
