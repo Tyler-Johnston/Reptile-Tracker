@@ -12,11 +12,6 @@ const getMe = (client: PrismaClient): RequestHandler =>
       const user = await client.user.findUnique({
          where: { 
           id: req.user.id
-         },
-         include: {
-          reptiles: true,
-          sessions: true,
-          schedules: true
          }
          });
       res.json({ user })
