@@ -1,6 +1,3 @@
-// 3. When selecting a reptile the app should navigate to the Reptile page
-
-
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
@@ -107,15 +104,11 @@ export const Dashboard = () => {
   }
 
   useEffect(() => {
-    if (reptiles) {
-      getAllReptiles();
-    }
+    getAllReptiles();
   }, []);
 
   useEffect(() => {
-    if (tasks) {
-      getTodaySchedule();
-    }
+    getTodaySchedule();
   }, []);
 
   return (

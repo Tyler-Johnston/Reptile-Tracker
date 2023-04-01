@@ -22,15 +22,33 @@ interface Husbandry {
   humidity: number
 }
 
+interface Feeding {
+  id: number,
+  foodItem: string
+}
+
 export const Reptile = () => {
   const { id } = useParams();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [husbandries, setHusbandry] = useState<Husbandry[]>([]);
+  const [feedings, setFeedings] = useState<Feeding[]>([]);
   
   async function getAllFeedings() {
 
+    const result = await fetch(`http://localhost:8000/feeding/${id}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    });
+    const feedingeData = await result.json();
+    console.log(feedingeData);
 
-
+    setFeedings([]); // clear the tasks before appending more to it
+    feedingeData.feedings.forEach((feeding: Feeding) => {
+        setFeedings(feedings => [...feedings, feeding]);
+    });
   }
 
   async function getAllSchedules() {
@@ -67,12 +85,9 @@ export const Reptile = () => {
 
   useEffect(() => {
     getAllSchedules();
-  }, [])
-
-  useEffect(() => {
+    getAllFeedings();
     getAllHusbandries();
   }, [])
-
 
     return (
       <div>
@@ -102,6 +117,14 @@ export const Reptile = () => {
             <p>humidity: {husbandry.humidity}</p>
           </div>
         )) : "no husbandries set for this reptile"}
+
+          {/* View all Feedings */}
+          {feedings ? feedings.map((feeding : Feeding) => (
+          <div key={feeding.id}>
+            <h3>Feeding {feeding.id}</h3>
+            <p>Food Item: {feeding.foodItem}</p>
+          </div>
+        )) : "no feedings set for this reptile"}
       </div>
     )
   }
