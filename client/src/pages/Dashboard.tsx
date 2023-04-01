@@ -2,6 +2,7 @@
 
 
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 interface Reptile {
   id: number,
@@ -29,6 +30,7 @@ export const Dashboard = () => {
   const [sex, setSex] = useState("m");
   const [reptiles, setReptiles] = useState<Reptile[]>([]);
   const [tasks, setTasks] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   const body = {
     species,
@@ -99,6 +101,10 @@ export const Dashboard = () => {
 
   }
 
+  async function getReptilePage(id: number) {
+    navigate(`../reptile/${id}`)
+  }
+
   useEffect(() => {
     getAllReptiles();
   }, [reptiles]);
@@ -138,14 +144,13 @@ export const Dashboard = () => {
                 <h3>{reptile.name}</h3>
                 <p>Species: {reptile.species}</p>
                 <p>Sex: {reptile.sex}</p>
-                <p>Rep Id: {reptile.id}</p>
-                <button type="button">View Reptile Info</button>
+                <button type="button" onClick={() => getReptilePage(reptile.id)}>View Reptile Info</button>
                 <button type="button" onClick={() => deleteReptile(reptile.id)}>Delete Reptile</button>
               </div>
             ))}
           </div>
 
-          {/* View all tasks */}
+          {/* View all tasks for today */}
           <div>
             <h3>Tasks for today</h3>
             {tasks.map((task, index) => (
@@ -158,8 +163,11 @@ export const Dashboard = () => {
         </div>
       ) : 
       (
-        <p>not logged in!</p>
-        // Redirect to login page when this happens
+        <div>
+          <p>you aren't logged in</p>  
+          <button type="button" onClick={() => navigate("/login")}>Login</button>
+          <button type="button" onClick={() => navigate("/signup")}>Sign Up</button>
+        </div>
       )}
     </div>
   )
