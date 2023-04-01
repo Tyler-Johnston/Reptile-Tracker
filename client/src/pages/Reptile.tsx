@@ -29,12 +29,33 @@ interface Feeding {
 
 export const Reptile = () => {
   const { id } = useParams();
+
+  // List Data for Schedules, Husbandries, and Feedings
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [husbandries, setHusbandry] = useState<Husbandry[]>([]);
   const [feedings, setFeedings] = useState<Feeding[]>([]);
+
+  // Feeding Data
+  const [foodItem, setFoodItem] = useState("");
+
+  // Husbandry Data
+  const [length, setLength] = useState(1);
+  const [weight, setWeight] = useState(1);
+  const [temperature, setTemperature] = useState(1);
+  const [humidity, setHumidity] = useState(1);
+
+  // Schedule Data
+  const [type, setType] = useState("feed");
+  const [description, setDescription] = useState("");
+  const [monday, setMonday] = useState(false);
+  const [tuesday, setTuesday] = useState(false);
+  const [wednesday, setWednesday] = useState(false);
+  const [thursday, setThursday] = useState(false);
+  const [friday, setFriday] = useState(false);
+  const [saturday, setSaturday] = useState(false);
+  const [sunday, setSunday] = useState(false);
   
   async function getAllFeedings() {
-
     const result = await fetch(`http://localhost:8000/feeding/${id}`, {
       method: "get",
       headers: {
@@ -43,7 +64,6 @@ export const Reptile = () => {
       credentials: "include"
     });
     const feedingeData = await result.json();
-    console.log(feedingeData);
 
     setFeedings([]); // clear the tasks before appending more to it
     feedingeData.feedings.forEach((feeding: Feeding) => {
@@ -83,6 +103,65 @@ export const Reptile = () => {
     });
   }
 
+  async function createFeeding() {
+
+    const body = {
+      foodItem
+    }
+
+    const result = await fetch(`http://localhost:8000/feeding/${id}`, {
+      method: 'post',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify(body)
+    });
+  }
+
+  async function createHusbandry() {
+
+    const body = {
+      length,
+      weight,
+      temperature,
+      humidity
+    }
+
+    const result = await fetch(`http://localhost:8000/husbandry/${id}`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(body)
+    })
+  }
+
+  async function createSchedule() {
+
+    const body = {
+      type,
+      description,
+      monday,
+      tuesday,
+      wednesday,
+      thursday,
+      friday,
+      saturday,
+      sunday,
+    }
+
+    const result = await fetch(`http://localhost:8000/schedule/${id}`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(body)
+    })
+  }
+
   useEffect(() => {
     getAllSchedules();
     getAllFeedings();
@@ -91,6 +170,98 @@ export const Reptile = () => {
 
     return (
       <div>
+
+        {/* Create new Feeding */}
+        <div>
+          <form>
+            <label>
+              Feeding
+              <input value={foodItem} onChange={e => setFoodItem(e.target.value)} type="text" />
+            </label>
+            <button type="button" onClick={createFeeding}>Add feeding</button>
+          </form>
+        </div>
+
+        {/* Create new Husbandry */}
+        <div>
+          <form>
+            <label>
+              Length
+              <input value={length} onChange={e => setLength(parseFloat(e.target.value))} type="number" min="1" />
+            </label>
+
+            <label>
+              Weight
+              <input value={weight} onChange={e => setWeight(parseFloat(e.target.value))} type="number" min="1" />
+            </label>
+
+            <label>
+              Temperature
+              <input value={temperature} onChange={e => setTemperature(parseFloat(e.target.value))} type="number" min="1" />
+            </label>
+
+            <label>
+              Humidity
+              <input value={humidity} onChange={e => setHumidity(parseFloat(e.target.value))} type="number" min="1" />
+            </label>
+
+
+            <button type="button" onClick={createHusbandry}>Add Husbandry</button>
+          </form>
+        </div>
+
+        {/* Create new Schedule */}
+        <div>
+          <form>
+            <select name="type" value={type} onChange={e => setType(e.target.value)}>
+              <option value="feed">Feed</option>
+              <option value="clean">Clean</option>
+              <option value="record">Record</option>
+            </select>
+
+            <label>
+              Description
+              <input value={description} onChange={e => setDescription((e.target.value))} type="text" />
+            </label>
+
+            <label>
+              Monday
+              <input value={monday ? "true" : "false"} onChange={e => setMonday(Boolean((e.target.value)))} type="checkbox" />
+            </label>
+
+            <label>
+              Tuesday
+              <input value={tuesday ? "true" : "false"} onChange={e => setTuesday(Boolean((e.target.value)))} type="checkbox" />
+            </label>
+
+            <label>
+              Wednesday
+              <input value={wednesday ? "true" : "false"} onChange={e => setWednesday(Boolean((e.target.value)))} type="checkbox" />
+            </label>
+
+            <label>
+              Thursday
+              <input value={thursday ? "true" : "false"} onChange={e => setThursday(Boolean((e.target.value)))} type="checkbox" />
+            </label>
+
+            <label>
+              Friday
+              <input value={friday ? "true" : "false"} onChange={e => setFriday(Boolean((e.target.value)))} type="checkbox" />
+            </label>
+
+            <label>
+              Saturday
+              <input value={saturday ? "true" : "false"} onChange={e => setSaturday(Boolean((e.target.value)))} type="checkbox" />
+            </label>
+
+            <label>
+              Sunday
+              <input value={sunday ? "true" : "false"} onChange={e => setSunday(Boolean((e.target.value)))} type="checkbox" />
+            </label>
+            <button type="button" onClick={createSchedule}>Add Schedule</button>
+          </form>
+        </div>
+
         {/* View all Schedules */}
         {schedules ? schedules.map((schedule : Schedule) => (
           <div key={schedule.id}>
