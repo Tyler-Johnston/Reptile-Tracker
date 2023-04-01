@@ -64,6 +64,35 @@ app.post("/sessions",  async (req, res) => {
   res.json({user});
 });
 
+// log out
+app.post("/logout", async (req, res) => {
+  const sessionToken = req.cookies["session-token"];
+  if (!sessionToken) {
+    res.status(400).json({ message: "You are not currently logged in" });
+    return;
+  }
+
+  const session = await client.session.findUnique({
+    where: {
+      token: sessionToken,
+    },
+  });
+  if (!session) {
+    res.status(400).json({ message: "You are not currently logged in" });
+    return;
+  }
+
+  await client.session.delete({
+    where: {
+      id: session.id,
+    },
+  });
+
+  res.clearCookie("session-token");
+  res.json({ message: "You have been logged out" });
+});
+
+
 usersController(app, client);
 reptilesController(app, client);
 feedingController(app, client);
