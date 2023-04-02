@@ -112,7 +112,7 @@ export const Reptile = () => {
     });
     const feedingData = await result.json()
     const feeding = feedingData.feeding;
-    setFeedings([feeding, ...feedings]);
+    setFeedings([...feedings, feeding]);
   }
 
   async function createSchedule() {
@@ -139,7 +139,7 @@ export const Reptile = () => {
     });
     const schedulesData = await result.json()
     const schedule = schedulesData.schedule;
-    setSchedules([schedule, ...schedules])
+    setSchedules([...schedules, schedule])
   }
 
   async function createHusbandry() {
@@ -161,7 +161,7 @@ export const Reptile = () => {
     });
     const husbandryData = await result.json()
     const husbandry = husbandryData.husbandry;
-    setHusbandry([husbandry, ...husbandries])
+    setHusbandry([...husbandries, husbandry]);
   }
 
   async function updateReptile() {
