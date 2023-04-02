@@ -141,7 +141,7 @@ export const Reptile = () => {
       },
       credentials: "include",
       body: JSON.stringify(body)
-    })
+    }) 
   }
 
   async function createSchedule() {
