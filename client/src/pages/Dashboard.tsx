@@ -80,6 +80,7 @@ export const Dashboard = () => {
       },
       credentials: "include"
     });
+    setReptiles(prevReptiles => prevReptiles.filter(reptile => reptile.id !== id));
   }
 
   async function getTodaySchedule() {
