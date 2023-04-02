@@ -31,30 +31,29 @@ export const SignUp = () => {
   }
 
   return (
-    <div>
-      <form className="signup-form">
-        <label>
-          First Name
-          <input value={firstName} onChange={e => setFirstName(e.target.value)} type="text" />
-        </label>
-        <label>
-          Last Name
-          <input value={lastName} onChange={e => setLastName(e.target.value)} type="text" />
-        </label>
-        <label>
-          Email
-          <input value={email} onChange={e => setEmail(e.target.value)} type="email" />
-        </label>
-        <label>
-          Password
-          <input value={password} onChange={e => setPassword(e.target.value)} type="password" />
-        </label>
-        <button type="button" onClick={signUp}>Sign up</button>
-      </form>
+<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <form className="signup-form" style={{ width: '80%', maxWidth: '500px' }}>
+    <label style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+      First Name
+      <input value={firstName} onChange={e => setFirstName(e.target.value)} type="text" />
+    </label>
+    <label style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+      Last Name
+      <input value={lastName} onChange={e => setLastName(e.target.value)} type="text" />
+    </label>
+    <label style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+      Email
+      <input value={email} onChange={e => setEmail(e.target.value)} type="email" />
+    </label>
+    <label style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+      Password
+      <input value={password} onChange={e => setPassword(e.target.value)} type="password" />
+    </label>
+    <button type="button" onClick={signUp} style={{ background: '#007bff', color: 'white', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none' }}>Sign up</button>
+  </form>
 
-      <button type="button" onClick={() => navigate("/login")}>Login</button>
-
-    </div>
+  
+</div>
 
 
   )
