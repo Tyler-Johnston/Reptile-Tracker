@@ -100,10 +100,6 @@ export const Dashboard = () => {
     });
   }
 
-  async function getReptilePage(id: number) {
-    navigate(`../reptile/${id}`)
-  }
-
   useEffect(() => {
     getAllReptiles();
     getTodaySchedule();
@@ -143,7 +139,7 @@ export const Dashboard = () => {
                 <h3>{reptile.name}</h3>
                 <p>Species: {reptile.species}</p>
                 <p>Sex: {reptile.sex}</p>
-                <button type="button" onClick={() => getReptilePage(reptile.id)}>View Reptile Info</button>
+                <button type="button" onClick={() => navigate(`../reptile/${reptile.id}`)}>View Reptile Info</button>
                 <button type="button" onClick={() => deleteReptile(reptile.id)}>Delete Reptile</button>
               </div>
             ))}
