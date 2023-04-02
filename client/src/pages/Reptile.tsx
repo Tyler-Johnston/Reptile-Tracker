@@ -60,7 +60,6 @@ export const Reptile = () => {
   const [name, setName] = useState("unnamed reptile");
   const [sex, setSex] = useState("m");
 
-  
   async function getAllFeedings() {
     const result = await fetch(`http://localhost:8000/feeding/${id}`, {
       method: "get",
@@ -70,11 +69,7 @@ export const Reptile = () => {
       credentials: "include"
     });
     const feedingeData = await result.json();
-
-    setFeedings([]); // clear the tasks before appending more to it
-    feedingeData.feedings.forEach((feeding: Feeding) => {
-        setFeedings(feedings => [...feedings, feeding]);
-    });
+    setFeedings(feedingeData.feedings);
   }
 
   async function getAllSchedules() {
@@ -86,11 +81,7 @@ export const Reptile = () => {
       credentials: "include"
     });
     const scheduleData = await result.json();
-
-    setSchedules([]); // clear the tasks before appending more to it
-    scheduleData.schedules.forEach((schedule: Schedule) => {
-        setSchedules(schedules => [...schedules, schedule]);
-    });
+    setSchedules(scheduleData.schedules);
   }
 
   async function getAllHusbandries() {
@@ -102,11 +93,7 @@ export const Reptile = () => {
       credentials: "include"
     });
     const husbandryData = await result.json();
-    
-    setHusbandry([]); // clear the tasks before appending more to it
-    husbandryData.data.forEach((husbandries: Husbandry) => {
-        setHusbandry(husbandry => [...husbandry, husbandries]);
-    });
+    setHusbandry(husbandryData.data);
   }
 
   async function createFeeding() {
@@ -123,25 +110,9 @@ export const Reptile = () => {
       credentials: "include",
       body: JSON.stringify(body)
     });
-  }
-
-  async function createHusbandry() {
-
-    const body = {
-      length,
-      weight,
-      temperature,
-      humidity
-    }
-
-    const result = await fetch(`http://localhost:8000/husbandry/${id}`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(body)
-    })
+    const feedingData = await result.json()
+    const feeding = feedingData.feeding;
+    setFeedings([feeding, ...feedings]);
   }
 
   async function createSchedule() {
@@ -165,7 +136,32 @@ export const Reptile = () => {
       },
       credentials: "include",
       body: JSON.stringify(body)
-    })
+    });
+    const schedulesData = await result.json()
+    const schedule = schedulesData.schedule;
+    setSchedules([schedule, ...schedules])
+  }
+
+  async function createHusbandry() {
+
+    const body = {
+      length,
+      weight,
+      temperature,
+      humidity
+    }
+
+    const result = await fetch(`http://localhost:8000/husbandry/${id}`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(body)
+    });
+    const husbandryData = await result.json()
+    const husbandry = husbandryData.husbandry;
+    setHusbandry([husbandry, ...husbandries])
   }
 
   async function updateReptile() {
@@ -187,8 +183,8 @@ export const Reptile = () => {
 
   useEffect(() => {
     getAllSchedules();
-    getAllFeedings();
     getAllHusbandries();
+    getAllFeedings();
   }, [])
 
     return (
