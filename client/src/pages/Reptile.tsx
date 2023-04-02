@@ -57,7 +57,7 @@ export const Reptile = () => {
 
   // Update Reptile Data
   const [species, setSpecies] = useState("ball_python");
-  const [name, setName] = useState("unnamed reptile");
+  const [name, setName] = useState("");
   const [sex, setSex] = useState("m");
 
   async function getAllFeedings() {
@@ -181,14 +181,20 @@ export const Reptile = () => {
       name,
       sex
     }
-    const result = await fetch(`http://localhost:8000/reptile/${id}`, {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(body)
-    })
+
+    if (name === "" || name === undefined) {
+      alert("make sure the reptile has a name")
+    }
+    else {
+      const result = await fetch(`http://localhost:8000/reptile/${id}`, {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(body)
+      })
+    }
   }
 
   useEffect(() => {

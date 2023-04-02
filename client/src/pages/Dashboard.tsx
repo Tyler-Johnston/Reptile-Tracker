@@ -23,7 +23,7 @@ interface Schedule {
 
 export const Dashboard = () => {
   const [species, setSpecies] = useState("ball_python");
-  const [name, setName] = useState("unnamed reptile");
+  const [name, setName] = useState("");
   const [sex, setSex] = useState("m");
   const [reptiles, setReptiles] = useState<Reptile[]>([]);
   const [tasks, setTasks] = useState<string[]>([]);
@@ -46,7 +46,12 @@ export const Dashboard = () => {
     });
     const reptileData = await result.json()
     const reptile = reptileData.reptile;
-    setReptiles([...reptiles, reptile]);
+    if (reptile != undefined) {
+      setReptiles([...reptiles, reptile]);
+    }
+    else {
+      alert("make sure the reptile has a name")
+    }
   }
 
   async function getAllReptiles() {
