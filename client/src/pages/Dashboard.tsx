@@ -133,8 +133,9 @@ export const Dashboard = () => {
             </form>
           </div>
 
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           {/* View All Reptiles */}
-          <div>
+          <div style={{ flex: 1, marginRight: '1rem' }}>
             {reptiles.map((reptile: Reptile) => (
               <div style={{background:'#e0e0e0',padding:'0px 5px', margin:'4px', borderRadius:'9px'}}key={reptile.id}>
                 <h3>{reptile.name}</h3>
@@ -147,12 +148,14 @@ export const Dashboard = () => {
           </div>
 
           {/* View all tasks for today */}
-          <div>
+          <div style={{ flex: 1, marginLeft: '1rem' }}>
             <h3>Tasks for today</h3>
             {tasks.map((task, index) => (
             <p key={index}>{task}</p>
             ))}
           </div>
+      </div>
+
 
           {/* Log out */}
           <button style={{ background: 'maroon', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={logout}>Log out</button>
