@@ -6,7 +6,7 @@ import { Home } from "./pages/Home"
 import { Root } from "./pages/Root"
 import { Dashboard } from "./pages/Dashboard"
 import { SignUp } from "./pages/SignUp"
-import { Login } from "./pages/Login"
+import { SignIn } from "./pages/SignIn"
 import { Reptile } from "./pages/Reptile"
 
 
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'login',
-        element: <Login />,
+        element: <SignIn />,
       },
       {
         path: 'reptile/:id',
