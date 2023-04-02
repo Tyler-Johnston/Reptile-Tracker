@@ -54,6 +54,12 @@ export const Reptile = () => {
   const [friday, setFriday] = useState(false);
   const [saturday, setSaturday] = useState(false);
   const [sunday, setSunday] = useState(false);
+
+  // Update Reptile Data
+  const [species, setSpecies] = useState("ball_python");
+  const [name, setName] = useState("unnamed reptile");
+  const [sex, setSex] = useState("m");
+
   
   async function getAllFeedings() {
     const result = await fetch(`http://localhost:8000/feeding/${id}`, {
@@ -162,6 +168,23 @@ export const Reptile = () => {
     })
   }
 
+  async function updateReptile() {
+
+    const body = {
+      species,
+      name,
+      sex
+    }
+    const result = await fetch(`http://localhost:8000/reptile/${id}`, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(body)
+    })
+  }
+
   useEffect(() => {
     getAllSchedules();
     getAllFeedings();
@@ -170,6 +193,25 @@ export const Reptile = () => {
 
     return (
       <div>
+
+        {/* Update Reptile */}
+        <div>
+            <select name="species" value={species} onChange={e => setSpecies(e.target.value)}>
+              <option value="ball_python">Ball Python</option>
+              <option value="king_snake">King Snake</option>
+              <option value="corn_snake">Corn Snake</option>
+              <option value="redtail_boa">Redtail Boa</option>
+            </select>
+
+            <input value={name} placeholder="name" onChange={e => setName(e.target.value)}></input>
+
+            <select name="sex" value={sex} onChange={e => setSex(e.target.value)}>
+              <option value="m">Male</option>
+              <option value="f">Female</option>
+            </select>
+
+            <button type="button" onClick={updateReptile}>Update Reptile</button>
+          </div>
 
         {/* Create new Feeding */}
         <div>
