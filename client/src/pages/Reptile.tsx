@@ -191,118 +191,128 @@ export const Reptile = () => {
       <div>
 
         {/* Update Reptile */}
-        <div>
-            <select name="species" value={species} onChange={e => setSpecies(e.target.value)}>
+        <div style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
+            <select style={{ background: '#6c757d', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} name="species" value={species} onChange={e => setSpecies(e.target.value)}>
               <option value="ball_python">Ball Python</option>
               <option value="king_snake">King Snake</option>
               <option value="corn_snake">Corn Snake</option>
               <option value="redtail_boa">Redtail Boa</option>
             </select>
 
-            <input value={name} placeholder="name" onChange={e => setName(e.target.value)}></input>
+            <input style={{background: 'white', color: 'black', margin:'4px', padding: '0.5rem 1rem', marginTop: '1rem' }} value={name} placeholder="name" onChange={e => setName(e.target.value)}></input>
 
-            <select name="sex" value={sex} onChange={e => setSex(e.target.value)}>
+            <select style={{ background: '#6c757d', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} name="sex" value={sex} onChange={e => setSex(e.target.value)}>
               <option value="m">Male</option>
               <option value="f">Female</option>
             </select>
-
-            <button type="button" onClick={updateReptile}>Update Reptile</button>
+            <br></br>
+            <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={updateReptile}>Update Reptile</button>
           </div>
 
+
         {/* Create new Feeding */}
-        <div>
+        <div style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
           <form>
             <label>
-              Feeding
-              <input value={foodItem} onChange={e => setFoodItem(e.target.value)} type="text" />
+              Feeding:
+              <input style={{margin:'0px 10px'}} value={foodItem} onChange={e => setFoodItem(e.target.value)} type="text" />
             </label>
-            <button type="button" onClick={createFeeding}>Add feeding</button>
+            <br></br>
+            <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={createFeeding}>Add feeding</button>
           </form>
         </div>
-
         {/* Create new Husbandry */}
         <div>
-          <form>
+          <form style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
             <label>
               Length
-              <input value={length} onChange={e => setLength(parseFloat(e.target.value))} type="number" min="1" />
+              <input style={{margin:"0px 10px"}} value={length} onChange={e => setLength(parseFloat(e.target.value))} type="number" min="1" />
             </label>
-
+            <br></br>
             <label>
               Weight
-              <input value={weight} onChange={e => setWeight(parseFloat(e.target.value))} type="number" min="1" />
+              <input style={{margin:"0px 10px"}} value={weight} onChange={e => setWeight(parseFloat(e.target.value))} type="number" min="1" />
             </label>
-
+            <br></br>
             <label>
               Temperature
-              <input value={temperature} onChange={e => setTemperature(parseFloat(e.target.value))} type="number" min="1" />
+              <input style={{margin:"0px 10px"}} value={temperature} onChange={e => setTemperature(parseFloat(e.target.value))} type="number" min="1" />
             </label>
-
+            <br></br>
             <label>
               Humidity
-              <input value={humidity} onChange={e => setHumidity(parseFloat(e.target.value))} type="number" min="1" />
+              <input style={{margin:"0px 10px"}} value={humidity} onChange={e => setHumidity(parseFloat(e.target.value))} type="number" min="1" />
             </label>
+            <br></br>
 
-
-            <button type="button" onClick={createHusbandry}>Add Husbandry</button>
+            <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={createHusbandry}>Add Husbandry</button>
           </form>
         </div>
 
         {/* Create new Schedule */}
-        <div>
+        <div style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
           <form>
-            <select name="type" value={type} onChange={e => setType(e.target.value)}>
+            <label>
+            Task: 
+            <select style={{margin:'5px'}}name="type" value={type} onChange={e => setType(e.target.value)}>
               <option value="feed">Feed</option>
               <option value="clean">Clean</option>
               <option value="record">Record</option>
             </select>
-
-            <label>
-              Description
-              <input value={description} onChange={e => setDescription((e.target.value))} type="text" />
             </label>
-
+            <br></br>
+            
             <label>
+              Description:
+              <input style={{margin:'4px'}}value={description} onChange={e => setDescription((e.target.value))} type="text" />
+            </label>
+            <br></br>
+            <br></br>
+            <div style={{display:"flex",justifyContent:"space-around"}}>
+            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
               Monday
               <input value={monday ? "true" : "false"} onChange={e => setMonday(Boolean((e.target.value)))} type="checkbox" />
             </label>
 
-            <label>
+            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
               Tuesday
               <input value={tuesday ? "true" : "false"} onChange={e => setTuesday(Boolean((e.target.value)))} type="checkbox" />
             </label>
 
-            <label>
+            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
               Wednesday
               <input value={wednesday ? "true" : "false"} onChange={e => setWednesday(Boolean((e.target.value)))} type="checkbox" />
             </label>
 
-            <label>
+            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
               Thursday
               <input value={thursday ? "true" : "false"} onChange={e => setThursday(Boolean((e.target.value)))} type="checkbox" />
             </label>
 
-            <label>
+            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
               Friday
               <input value={friday ? "true" : "false"} onChange={e => setFriday(Boolean((e.target.value)))} type="checkbox" />
             </label>
 
-            <label>
+            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
               Saturday
               <input value={saturday ? "true" : "false"} onChange={e => setSaturday(Boolean((e.target.value)))} type="checkbox" />
             </label>
 
-            <label>
+            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
               Sunday
               <input value={sunday ? "true" : "false"} onChange={e => setSunday(Boolean((e.target.value)))} type="checkbox" />
             </label>
-            <button type="button" onClick={createSchedule}>Add Schedule</button>
+            </div>
+            <br></br>
+            <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={createSchedule}>Add Schedule</button>
+            
           </form>
         </div>
 
         {/* View all Schedules */}
         {schedules ? schedules.map((schedule : Schedule) => (
-          <div key={schedule.id}>
+          <div key={schedule.id} style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
             <h3>Schedule {schedule.id}</h3>
             <p>{schedule.type}</p>
             <p>{schedule.description}</p>
@@ -318,7 +328,7 @@ export const Reptile = () => {
 
           {/* View all Husbandries */}
           {husbandries ? husbandries.map((husbandry : Husbandry) => (
-          <div key={husbandry.id}>
+          <div key={husbandry.id} style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
             <h3>Husbandry {husbandry.id}</h3>
             <p>length: {husbandry.length}</p>
             <p>weight: {husbandry.weight}</p>
@@ -329,7 +339,7 @@ export const Reptile = () => {
 
           {/* View all Feedings */}
           {feedings ? feedings.map((feeding : Feeding) => (
-          <div key={feeding.id}>
+          <div key={feeding.id} style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
             <h3>Feeding {feeding.id}</h3>
             <p>Food Item: {feeding.foodItem}</p>
           </div>

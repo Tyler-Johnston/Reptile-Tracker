@@ -115,33 +115,33 @@ export const Dashboard = () => {
           <div>
             {/* Create a Reptile */}
             <form>
-              <select name="species" value={species} onChange={e => setSpecies(e.target.value)}>
+              <select style={{ background: '#6c757d', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} name="species" value={species} onChange={e => setSpecies(e.target.value)}>
                 <option value="ball_python">Ball Python</option>
                 <option value="king_snake">King Snake</option>
                 <option value="corn_snake">Corn Snake</option>
                 <option value="redtail_boa">Redtail Boa</option>
               </select>
 
-              <input value={name} placeholder="name" onChange={e => setName(e.target.value)}></input>
+              <input style={{ background: 'white', color: 'black', margin:'4px', padding: '0.5rem 1rem', marginTop: '1rem' }} value={name} placeholder="name" onChange={e => setName(e.target.value)}></input>
 
-              <select name="sex" value={sex} onChange={e => setSex(e.target.value)}>
+              <select style={{ background: '#6c757d', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} name="sex" value={sex} onChange={e => setSex(e.target.value)}>
                 <option value="m">Male</option>
                 <option value="f">Female</option>
               </select>
 
-              <button type="button" onClick={createReptile}>Create Reptile</button>
+              <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={createReptile}>Create Reptile</button>
             </form>
           </div>
 
           {/* View All Reptiles */}
           <div>
             {reptiles.map((reptile: Reptile) => (
-              <div key={reptile.id}>
+              <div style={{background:'#e0e0e0',padding:'0px 5px', margin:'4px', borderRadius:'9px'}}key={reptile.id}>
                 <h3>{reptile.name}</h3>
-                <p>Species: {reptile.species}</p>
-                <p>Sex: {reptile.sex}</p>
-                <button type="button" onClick={() => navigate(`../reptile/${reptile.id}`)}>View Reptile Info</button>
-                <button type="button" onClick={() => deleteReptile(reptile.id)}>Delete Reptile</button>
+                <p style={{display:"inline", margin:"0px 4px"}}>Species: {reptile.species}</p>
+                <p style={{display:"inline", margin:"0px 4px"}}>Sex: {reptile.sex}</p>
+                <button style={{ background: '#008CBA', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button"  onClick={() => navigate(`../reptile/${reptile.id}`)}>View Reptile Info</button>
+                <button style={{ background: 'maroon', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={() => deleteReptile(reptile.id)}>Delete Reptile</button>
               </div>
             ))}
           </div>
@@ -155,14 +155,14 @@ export const Dashboard = () => {
           </div>
 
           {/* Log out */}
-          <button type="button" onClick={logout}>Log out</button>
+          <button style={{ background: 'maroon', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={logout}>Log out</button>
         </div>
       ) : 
       (
         <div>
           <p>you aren't logged in</p>  
           <button type="button" onClick={() => navigate("/login")}>Login</button>
-          <button type="button" onClick={() => navigate("/signup")}>Sign Up</button>
+          <button  type="button" onClick={() => navigate("/signup")}>Sign Up</button>
         </div>
       )}
     </div>
