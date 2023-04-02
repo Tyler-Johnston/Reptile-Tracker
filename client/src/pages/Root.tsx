@@ -5,7 +5,6 @@ export const Root = () => {
 
   return (
     <>
-      <nav className="navbar">{name}</nav>
       <Outlet />
     </>
   )
