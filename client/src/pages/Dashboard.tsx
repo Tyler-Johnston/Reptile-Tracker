@@ -44,6 +44,9 @@ export const Dashboard = () => {
       credentials: "include",
       body: JSON.stringify(body)
     });
+    const reptileData = await result.json()
+    const reptile = reptileData.reptile;
+    setReptiles([...reptiles, reptile]);
   }
 
   async function getAllReptiles() {
@@ -89,14 +92,12 @@ export const Dashboard = () => {
     });
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
     const scheduleData = await result.json();
-
     setTasks([]); // clear the tasks before appending more to it
     scheduleData.schedules.forEach((schedule: Schedule) => {
       if (schedule[today as keyof Schedule]) {
         setTasks(tasks => [...tasks, schedule.description])
       }
     });
-
   }
 
   async function getReptilePage(id: number) {
@@ -105,11 +106,9 @@ export const Dashboard = () => {
 
   useEffect(() => {
     getAllReptiles();
-  }, []);
-
-  useEffect(() => {
     getTodaySchedule();
   }, []);
+
 
   return (
     <div>
@@ -118,21 +117,23 @@ export const Dashboard = () => {
         <div>
           <div>
             {/* Create a Reptile */}
-            <select name="species" value={species} onChange={e => setSpecies(e.target.value)}>
-              <option value="ball_python">Ball Python</option>
-              <option value="king_snake">King Snake</option>
-              <option value="corn_snake">Corn Snake</option>
-              <option value="redtail_boa">Redtail Boa</option>
-            </select>
+            <form>
+              <select name="species" value={species} onChange={e => setSpecies(e.target.value)}>
+                <option value="ball_python">Ball Python</option>
+                <option value="king_snake">King Snake</option>
+                <option value="corn_snake">Corn Snake</option>
+                <option value="redtail_boa">Redtail Boa</option>
+              </select>
 
-            <input value={name} placeholder="name" onChange={e => setName(e.target.value)}></input>
+              <input value={name} placeholder="name" onChange={e => setName(e.target.value)}></input>
 
-            <select name="sex" value={sex} onChange={e => setSex(e.target.value)}>
-              <option value="m">Male</option>
-              <option value="f">Female</option>
-            </select>
+              <select name="sex" value={sex} onChange={e => setSex(e.target.value)}>
+                <option value="m">Male</option>
+                <option value="f">Female</option>
+              </select>
 
-            <button type="button" onClick={createReptile}>Create Reptile</button>
+              <button type="button" onClick={createReptile}>Create Reptile</button>
+            </form>
           </div>
 
           {/* View All Reptiles */}
