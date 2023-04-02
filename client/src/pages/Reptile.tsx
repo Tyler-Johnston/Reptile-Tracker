@@ -112,7 +112,12 @@ export const Reptile = () => {
     });
     const feedingData = await result.json()
     const feeding = feedingData.feeding;
-    setFeedings([...feedings, feeding]);
+    if (feeding != undefined) {
+      setFeedings([...feedings, feeding]);
+    }
+    else {
+      alert("add a food item to the feedings")
+    }
   }
 
   async function createSchedule() {
@@ -139,7 +144,12 @@ export const Reptile = () => {
     });
     const schedulesData = await result.json()
     const schedule = schedulesData.schedule;
-    setSchedules([...schedules, schedule])
+    if (schedule != undefined) {
+      setSchedules([...schedules, schedule])
+    }
+    else {
+      alert("add a description to the schedule")
+    }
   }
 
   async function createHusbandry() {
@@ -209,13 +219,12 @@ export const Reptile = () => {
             <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={updateReptile}>Update Reptile</button>
           </div>
 
-
         {/* Create new Feeding */}
         <div style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
           <form>
             <label>
               Feeding:
-              <input style={{margin:'0px 10px'}} value={foodItem} onChange={e => setFoodItem(e.target.value)} type="text" />
+              <input style={{margin:'0px 10px'}} placeholder="food item" value={foodItem} onChange={e => setFoodItem(e.target.value)} type="text" />
             </label>
             <br></br>
             <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={createFeeding}>Add feeding</button>
@@ -225,22 +234,22 @@ export const Reptile = () => {
         <div>
           <form style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
             <label>
-              Length
+              Length:
               <input style={{margin:"0px 10px"}} value={length} onChange={e => setLength(parseFloat(e.target.value))} type="number" min="1" />
             </label>
             <br></br>
             <label>
-              Weight
+              Weight:
               <input style={{margin:"0px 10px"}} value={weight} onChange={e => setWeight(parseFloat(e.target.value))} type="number" min="1" />
             </label>
             <br></br>
             <label>
-              Temperature
+              Temperature:
               <input style={{margin:"0px 10px"}} value={temperature} onChange={e => setTemperature(parseFloat(e.target.value))} type="number" min="1" />
             </label>
             <br></br>
             <label>
-              Humidity
+              Humidity:
               <input style={{margin:"0px 10px"}} value={humidity} onChange={e => setHumidity(parseFloat(e.target.value))} type="number" min="1" />
             </label>
             <br></br>
@@ -264,7 +273,7 @@ export const Reptile = () => {
             
             <label>
               Description:
-              <input style={{margin:'4px'}}value={description} onChange={e => setDescription((e.target.value))} type="text" />
+              <input style={{margin:'4px'}}value={description} placeholder="feed the reptiles" onChange={e => setDescription((e.target.value))} type="text" />
             </label>
             <br></br>
             <br></br>
@@ -309,41 +318,79 @@ export const Reptile = () => {
             
           </form>
         </div>
-
-        {/* View all Schedules */}
-        {schedules ? schedules.map((schedule : Schedule) => (
-          <div key={schedule.id} style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
-            <h3>Schedule {schedule.id}</h3>
-            <p>{schedule.type}</p>
-            <p>{schedule.description}</p>
-            <p>{schedule.monday ? "monday" : ""}</p>
-            <p>{schedule.tuesday ? "tuesday" : ""}</p>
-            <p>{schedule.wednesday ? "wednesday" : ""}</p>
-            <p>{schedule.thursday ? "thursday" : ""}</p>
-            <p>{schedule.friday ? "friday" : ""}</p>
-            <p>{schedule.saturday ? "saturday" : ""}</p>
-            <p>{schedule.sunday ? "sunday" : ""}</p>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center"}}>
+          {/* View all Feedings */}
+          <div style={{ width: "450px", maxHeight: "600px", overflowY: "auto" }}>
+            {feedings
+              ? feedings.map((feeding: Feeding) => (
+                  <div
+                    key={feeding.id}
+                    style={{
+                      margin: "10px",
+                      borderRadius: "9px",
+                      background: "#e0e0e0",
+                      padding: "9px"
+                    }}
+                  >
+                    <h3>Feeding {feeding.id}</h3>
+                    <p>Food Item: {feeding.foodItem}</p>
+                  </div>
+                ))
+              : "no feedings set for this reptile"}
           </div>
-        )) : "no schedules set for this reptile"}
 
           {/* View all Husbandries */}
-          {husbandries ? husbandries.map((husbandry : Husbandry) => (
-          <div key={husbandry.id} style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
-            <h3>Husbandry {husbandry.id}</h3>
-            <p>length: {husbandry.length}</p>
-            <p>weight: {husbandry.weight}</p>
-            <p>temp: {husbandry.temperature}</p>
-            <p>humidity: {husbandry.humidity}</p>
+          <div style={{ width: "450px", maxHeight: "600px", overflowY: "auto" }}>
+            {husbandries
+              ? husbandries.map((husbandry: Husbandry) => (
+                  <div
+                    key={husbandry.id}
+                    style={{
+                      margin: "10px",
+                      borderRadius: "9px",
+                      background: "#e0e0e0",
+                      padding: "9px"
+                    }}
+                  >
+                    <h3>Husbandry {husbandry.id}</h3>
+                    <p>length: {husbandry.length}</p>
+                    <p>weight: {husbandry.weight}</p>
+                    <p>temp: {husbandry.temperature}</p>
+                    <p>humidity: {husbandry.humidity}</p>
+                  </div>
+                ))
+              : "no husbandries set for this reptile"}
           </div>
-        )) : "no husbandries set for this reptile"}
 
-          {/* View all Feedings */}
-          {feedings ? feedings.map((feeding : Feeding) => (
-          <div key={feeding.id} style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
-            <h3>Feeding {feeding.id}</h3>
-            <p>Food Item: {feeding.foodItem}</p>
+          {/* View all Schedules */}
+          <div style={{ width: "450px", maxHeight: "600px", overflowY: "auto" }}>
+            {schedules
+              ? schedules.map((schedule: Schedule) => (
+                  <div
+                    key={schedule.id}
+                    style={{
+                      margin: "10px",
+                      borderRadius: "9px",
+                      background: "#e0e0e0",
+                      padding: "9px"
+                    }}
+                  >
+                    <h3>Schedule {schedule.id}</h3>
+                    <p>{schedule.type}</p>
+                    <p>{schedule.description}</p>
+                    <p>{schedule.monday ? "monday" : ""}</p>
+                    <p>{schedule.tuesday ? "tuesday" : ""}</p>
+                    <p>{schedule.wednesday ? "wednesday" : ""}</p>
+                    <p>{schedule.thursday ? "thursday" : ""}</p>
+                    <p>{schedule.friday ? "friday" : ""}</p>
+                    <p>{schedule.saturday ? "saturday" : ""}</p>
+                    <p>{schedule.sunday ? "sunday" : ""}</p>
+                  </div>
+                ))
+              : "no schedules set for this reptile"}
           </div>
-        )) : "no feedings set for this reptile"}
+        </div>
+
       </div>
     )
   }
