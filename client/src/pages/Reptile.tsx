@@ -342,7 +342,7 @@ export const Reptile = () => {
                     <p>Food Item: {feeding.foodItem}</p>
                   </div>
                 ))
-              : "no feedings set for this reptile"}
+              : ""}
           </div>
 
           {/* View all Husbandries */}
@@ -365,7 +365,7 @@ export const Reptile = () => {
                     <p>humidity: {husbandry.humidity}</p>
                   </div>
                 ))
-              : "no husbandries set for this reptile"}
+              : ""}
           </div>
 
           {/* View all Schedules */}
@@ -393,7 +393,7 @@ export const Reptile = () => {
                     <p>{schedule.sunday ? "sunday" : ""}</p>
                   </div>
                 ))
-              : "no schedules set for this reptile"}
+              : ""}
           </div>
         </div>
 
