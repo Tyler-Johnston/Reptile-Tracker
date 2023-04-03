@@ -346,6 +346,7 @@ export const Reptile = () => {
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center"}}>
           {/* View all Feedings */}
           <div style={{ width: "33%", maxHeight: "600px", overflowY: "auto" }}>
+            <h2>Feedings</h2>
             {feedings
               ? feedings.map((feeding: Feeding) => (
                   <div
@@ -357,8 +358,7 @@ export const Reptile = () => {
                       padding: "9px"
                     }}
                   >
-                    <h3>Feeding {feeding.id}</h3>
-                    <p>Food Item: {feeding.foodItem}</p>
+                    <p>{feeding.foodItem}</p>
                   </div>
                 ))
               : ""}
@@ -366,6 +366,7 @@ export const Reptile = () => {
 
           {/* View all Husbandries */}
           <div style={{ width: "33%", maxHeight: "600px", overflowY: "auto" }}>
+            <h2>Husbandries</h2>
             {husbandries
               ? husbandries.map((husbandry: Husbandry) => (
                   <div
@@ -377,10 +378,9 @@ export const Reptile = () => {
                       padding: "9px"
                     }}
                   >
-                    <h3>Husbandry {husbandry.id}</h3>
                     <p>length: {husbandry.length}</p>
                     <p>weight: {husbandry.weight}</p>
-                    <p>temp: {husbandry.temperature}</p>
+                    <p>temperature: {husbandry.temperature}</p>
                     <p>humidity: {husbandry.humidity}</p>
                   </div>
                 ))
@@ -389,6 +389,7 @@ export const Reptile = () => {
 
           {/* View all Schedules */}
           <div style={{ width: "33%", maxHeight: "600px", overflowY: "auto" }}>
+            <h2>Schedules</h2>
             {schedules
               ? schedules.map((schedule: Schedule) => (
                   <div
@@ -400,9 +401,8 @@ export const Reptile = () => {
                       padding: "9px"
                     }}
                   >
-                    <h3>Schedule {schedule.id}</h3>
-                    <p>{schedule.type}</p>
-                    <p>{schedule.description}</p>
+                    <h3>{schedule.type}</h3>
+                    <p>Description: {schedule.description}</p>
                     <p>{schedule.monday ? "monday" : ""}</p>
                     <p>{schedule.tuesday ? "tuesday" : ""}</p>
                     <p>{schedule.wednesday ? "wednesday" : ""}</p>
