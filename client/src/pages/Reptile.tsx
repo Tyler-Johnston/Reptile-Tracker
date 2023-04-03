@@ -345,7 +345,7 @@ export const Reptile = () => {
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center"}}>
           {/* View all Feedings */}
-          <div style={{ width: "450px", maxHeight: "600px", overflowY: "auto" }}>
+          <div style={{ width: "33%", maxHeight: "600px", overflowY: "auto" }}>
             {feedings
               ? feedings.map((feeding: Feeding) => (
                   <div
@@ -365,7 +365,7 @@ export const Reptile = () => {
           </div>
 
           {/* View all Husbandries */}
-          <div style={{ width: "450px", maxHeight: "600px", overflowY: "auto" }}>
+          <div style={{ width: "33%", maxHeight: "600px", overflowY: "auto" }}>
             {husbandries
               ? husbandries.map((husbandry: Husbandry) => (
                   <div
@@ -388,7 +388,7 @@ export const Reptile = () => {
           </div>
 
           {/* View all Schedules */}
-          <div style={{ width: "450px", maxHeight: "600px", overflowY: "auto" }}>
+          <div style={{ width: "33%", maxHeight: "600px", overflowY: "auto" }}>
             {schedules
               ? schedules.map((schedule: Schedule) => (
                   <div
