@@ -89,8 +89,6 @@ export const Dashboard = () => {
     setReptiles(prevReptiles => prevReptiles.filter(reptile => reptile.id !== id));
   }
 
-
-
   async function getTodaySchedule() {
     const result = await fetch("http://localhost:8000/schedule", {
       method: "get",
@@ -104,16 +102,22 @@ export const Dashboard = () => {
     setTasks([]); // clear the tasks before appending more to it
     scheduleData.schedules.forEach((schedule: Schedule) => {
       if (schedule[today as keyof Schedule]) {
-        setTasks(tasks => [...tasks, schedule.description])
+        const reptile = reptiles.find(r => r.id === schedule.reptileId);
+        if (reptile) {
+          setTasks(tasks => [...tasks, reptile.name + ": " + schedule.description])
+        }
       }
     });
   }
 
   useEffect(() => {
     getAllReptiles();
-    getTodaySchedule();
     checkNotLoggedIn();
   }, []);
+
+  useEffect(() => {
+    getTodaySchedule();
+  }, [reptiles])
  
   async function checkNotLoggedIn() {
     const result = await fetch("http://localhost:8000/users/me", {
