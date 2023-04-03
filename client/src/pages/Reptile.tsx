@@ -1,5 +1,6 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+
 
 interface Schedule {
   id: number,
@@ -203,6 +204,25 @@ export const Reptile = () => {
     getAllFeedings();
   }, [])
 
+  const navigate = useNavigate();
+
+  async function checkLoggedIn() {
+    const result = await fetch("http://localhost:8000/users/me", {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    });
+
+    if (result.status !== 200) {
+      navigate('/dashboard');
+    }
+  }
+
+  useEffect(() => {
+    checkLoggedIn();
+  }, []);
     return (
       <div>
 
