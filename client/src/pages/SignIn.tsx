@@ -33,16 +33,25 @@ export const SignIn = () => {
       password
     }
 
-    const result = await fetch("http://localhost:8000/sessions", {
-      method: 'post',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include",
-      body: JSON.stringify(body)
-    });
-    navigate("/dashboard")
-
+    if (email === "" || password === "") {
+      alert("you are missing input fields");
+    }
+    else {
+      const result = await fetch("http://localhost:8000/sessions", {
+        method: 'post',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify(body)
+      });
+      if (result.status === 200) {
+        navigate("/dashboard")
+      }
+      else {
+        alert("no login associated with this email and password");
+      }
+    }
   }
 
   return (

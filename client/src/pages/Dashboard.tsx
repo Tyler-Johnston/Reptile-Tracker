@@ -10,6 +10,7 @@ interface Reptile {
 
 interface Schedule {
   id: number,
+  reptileId: number
   type: string,
   description: string,
   monday: boolean,
@@ -87,6 +88,8 @@ export const Dashboard = () => {
     });
     setReptiles(prevReptiles => prevReptiles.filter(reptile => reptile.id !== id));
   }
+
+
 
   async function getTodaySchedule() {
     const result = await fetch("http://localhost:8000/schedule", {

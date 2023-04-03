@@ -35,17 +35,20 @@ export const SignUp = () => {
       password
     }
 
-    const result = await fetch("http://localhost:8000/users", {
-      method: 'post',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include",
-      body: JSON.stringify(body)
-    });
-
-    navigate("/dashboard")
-
+    if (firstName === "" || lastName === "" || email === "" || password == "") {
+      alert("you are missing input fields")
+    }
+    else {
+      const result = await fetch("http://localhost:8000/users", {
+        method: 'post',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify(body)
+      });
+      navigate("/dashboard")
+    }
   }
 
   return (
