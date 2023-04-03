@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -8,6 +8,24 @@ export const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  async function checkLoggedIn() {
+    const result = await fetch("http://localhost:8000/users/me", {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    });
+
+    if (result.status === 200) {
+      navigate('/dashboard');
+    }
+  }
+
+  useEffect(() => {
+    checkLoggedIn();
+  }, []);
 
   async function signUp() {
     const body = {
