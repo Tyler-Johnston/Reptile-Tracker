@@ -202,6 +202,7 @@ export const Reptile = () => {
     getAllSchedules();
     getAllHusbandries();
     getAllFeedings();
+    checkNotLoggedIn();
   }, [])
 
   const navigate = useNavigate();
@@ -220,9 +221,7 @@ export const Reptile = () => {
     }
   }
 
-  useEffect(() => {
-    checkNotLoggedIn();
-  }, []);
+
     return (
       <div>
 
