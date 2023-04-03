@@ -216,7 +216,7 @@ export const Reptile = () => {
     });
 
     if (result.status !== 200) {
-      navigate('/home');
+      navigate('/');
     }
   }
 
