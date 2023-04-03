@@ -206,7 +206,7 @@ export const Reptile = () => {
 
   const navigate = useNavigate();
 
-  async function checkLoggedIn() {
+  async function checkNotLoggedIn() {
     const result = await fetch("http://localhost:8000/users/me", {
       method: "get",
       headers: {
@@ -216,12 +216,12 @@ export const Reptile = () => {
     });
 
     if (result.status !== 200) {
-      navigate('/dashboard');
+      navigate('/home');
     }
   }
 
   useEffect(() => {
-    checkLoggedIn();
+    checkNotLoggedIn();
   }, []);
     return (
       <div>

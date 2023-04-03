@@ -110,8 +110,25 @@ export const Dashboard = () => {
     getAllReptiles();
     getTodaySchedule();
   }, []);
+ 
+  async function checkNotLoggedIn() {
+    const result = await fetch("http://localhost:8000/users/me", {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include"
+    });
 
+    if (result.status !== 200) {
+      navigate('/');
+    }
+  }
 
+  useEffect(() => {
+    checkNotLoggedIn();
+  }, []);
+ 
   return (
     <div>
       {reptiles ? 
