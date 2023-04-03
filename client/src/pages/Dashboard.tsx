@@ -109,6 +109,7 @@ export const Dashboard = () => {
   useEffect(() => {
     getAllReptiles();
     getTodaySchedule();
+    checkNotLoggedIn();
   }, []);
  
   async function checkNotLoggedIn() {
@@ -125,9 +126,7 @@ export const Dashboard = () => {
     }
   }
 
-  useEffect(() => {
-    checkNotLoggedIn();
-  }, []);
+
  
   return (
     <div>
