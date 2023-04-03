@@ -8,6 +8,7 @@ import { Dashboard } from "./pages/Dashboard"
 import { SignUp } from "./pages/SignUp"
 import { SignIn } from "./pages/SignIn"
 import { Reptile } from "./pages/Reptile"
+import { Error } from "./pages/Error"
 
 
 const router = createBrowserRouter([
@@ -34,6 +35,11 @@ const router = createBrowserRouter([
       {
         path: 'reptile/:id',
         element: <Reptile />,
+      }
+      ,
+      {
+        path: '*',
+        element: <Error />
       }
 
     ]
