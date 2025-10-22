@@ -1,28 +1,29 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import "../styles/Dashboard.css";
 
 interface Reptile {
-  id: number,
-  species: string,
-  name: string,
-  sex: string,
+  id: number;
+  species: string;
+  name: string;
+  sex: string;
 }
 
 interface Schedule {
-  id: number,
-  reptileId: number
-  type: string,
-  description: string,
-  monday: boolean,
-  tuesday: boolean,
-  wednesday: boolean,
-  thursday: boolean,
-  friday: boolean,
-  saturday: boolean,
-  sunday: boolean,
+  id: number;
+  reptileId: number;
+  type: string;
+  description: string;
+  monday: boolean;
+  tuesday: boolean;
+  wednesday: boolean;
+  thursday: boolean;
+  friday: boolean;
+  saturday: boolean;
+  sunday: boolean;
 }
 
-export const Dashboard = () => {
+export const Dashboard: React.FC = () => {
   const [species, setSpecies] = useState("ball_python");
   const [name, setName] = useState("");
   const [sex, setSex] = useState("m");
@@ -30,85 +31,85 @@ export const Dashboard = () => {
   const [tasks, setTasks] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  const body = {
-    species,
-    name,
-    sex
-  }
+  async function createReptile(): Promise<void> {
+    if (!name.trim()) {
+      alert("Please enter a name for your reptile.");
+      return;
+    }
+    const body = { species, name, sex };
 
-  async function createReptile() {
     const result = await fetch("http://localhost:8000/reptile", {
-      method: 'post',
-      headers: {
-        "Content-Type": "application/json"
-      },
+      method: "post",
+      headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
-    const reptileData = await result.json()
+
+    const reptileData = await result.json();
     const reptile = reptileData.reptile;
-    if (reptile != undefined) {
-      setReptiles([...reptiles, reptile]);
-    }
-    else {
-      alert("make sure the reptile has a name")
-    }
+    if (reptile) setReptiles((prev) => [...prev, reptile]);
   }
 
-  async function getAllReptiles() {
+  async function getAllReptiles(): Promise<void> {
     const result = await fetch("http://localhost:8000/reptile", {
       method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include"
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
     });
     const data = await result.json();
-    setReptiles(data.reptiles);
+    setReptiles(data.reptiles || []);
   }
 
-  async function logout() {
-    const result = await fetch("http://localhost:8000/logout", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include"
-    });
-    navigate("..")
-  }
-
-  async function deleteReptile(id: number) {
-    const result = await fetch(`http://localhost:8000/reptile/${id}`, {
+  async function deleteReptile(id: number): Promise<void> {
+    await fetch(`http://localhost:8000/reptile/${id}`, {
       method: "delete",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include"
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
     });
-    setReptiles(prevReptiles => prevReptiles.filter(reptile => reptile.id !== id));
+    setReptiles((prev) => prev.filter((r) => r.id !== id));
   }
 
-  async function getTodaySchedule() {
+  async function getTodaySchedule(): Promise<void> {
     const result = await fetch("http://localhost:8000/schedule", {
       method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include"
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
     });
-    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+    const today = new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+    }).toLowerCase();
+
     const scheduleData = await result.json();
-    setTasks([]); // clear the tasks before appending more to it
+    setTasks([]);
+
     scheduleData.schedules.forEach((schedule: Schedule) => {
       if (schedule[today as keyof Schedule]) {
-        const reptile = reptiles.find(r => r.id === schedule.reptileId);
+        const reptile = reptiles.find((r) => r.id === schedule.reptileId);
         if (reptile) {
-          setTasks(tasks => [...tasks, reptile.name + ": " + schedule.description])
+          setTasks((prev) => [...prev, `${reptile.name}: ${schedule.description}`]);
         }
       }
     });
   }
+
+  async function checkNotLoggedIn(): Promise<void> {
+    const result = await fetch("http://localhost:8000/users/me", {
+      method: "get",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    if (result.status !== 200) navigate("/");
+  }
+
+  function formatSpeciesName(species: string): string {
+    return species
+      .split("_")
+      .map((word) =>
+        word.charAt(0).toUpperCase() + word.slice(1)
+      )
+      .join(" ");
+  }
+
 
   useEffect(() => {
     getAllReptiles();
@@ -116,86 +117,89 @@ export const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    getTodaySchedule();
-  }, [reptiles])
- 
-  async function checkNotLoggedIn() {
-    const result = await fetch("http://localhost:8000/users/me", {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include"
-    });
+    if (reptiles.length > 0) getTodaySchedule();
+  }, [reptiles]);
 
-    if (result.status !== 200) {
-      navigate('/');
-    }
-  }
-
-
- 
   return (
-    <div>
-      {reptiles ? 
-      (
-        <div>
-          <div>
-            {/* Create a Reptile */}
-            <form>
-              <select style={{ background: '#6c757d', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} name="species" value={species} onChange={e => setSpecies(e.target.value)}>
-                <option value="ball_python">Ball Python</option>
-                <option value="king_snake">King Snake</option>
-                <option value="corn_snake">Corn Snake</option>
-                <option value="redtail_boa">Redtail Boa</option>
-              </select>
-
-              <input style={{ background: 'white', color: 'black', margin:'4px', padding: '0.5rem 1rem', marginTop: '1rem' }} value={name} placeholder="name" onChange={e => setName(e.target.value)}></input>
-
-              <select style={{ background: '#6c757d', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} name="sex" value={sex} onChange={e => setSex(e.target.value)}>
-                <option value="m">Male</option>
-                <option value="f">Female</option>
-              </select>
-
-              <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={createReptile}>Create Reptile</button>
-            </form>
-          </div>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          {/* View All Reptiles */}
-          <div style={{ flex: 1, marginRight: '1rem' }}>
-            {reptiles.map((reptile: Reptile) => (
-              <div style={{background:'#e0e0e0',padding:'0px 5px', margin:'4px', borderRadius:'9px'}}key={reptile.id}>
-                <h3>{reptile.name}</h3>
-                <p style={{display:"inline", margin:"0px 4px"}}>Species: {reptile.species}</p>
-                <p style={{display:"inline", margin:"0px 4px"}}>Sex: {reptile.sex}</p>
-                <button style={{ background: '#008CBA', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button"  onClick={() => navigate(`../reptile/${reptile.id}`)}>View Reptile Info</button>
-                <button style={{ background: 'maroon', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={() => deleteReptile(reptile.id)}>Delete Reptile</button>
-              </div>
-            ))}
-          </div>
-
-          {/* View all tasks for today */}
-          <div style={{ flex: 1, marginLeft: '1rem' }}>
-            <h3>Tasks for today</h3>
-            {tasks.map((task, index) => (
-            <p key={index}>{task}</p>
-            ))}
-          </div>
+    <div className="dashboard-container">
+      <div className="dashboard-header">
+        <h2>My Reptiles</h2>
       </div>
 
+      <div className="dashboard-form">
+        <h3>Add a New Reptile</h3>
+        <div className="form-row">
+          <select
+            value={species}
+            onChange={(e) => setSpecies(e.target.value)}
+            className="input-select"
+          >
+            <option value="ball_python">Ball Python</option>
+            <option value="king_snake">King Snake</option>
+            <option value="corn_snake">Corn Snake</option>
+            <option value="redtail_boa">Redtail Boa</option>
+          </select>
 
-          {/* Log out */}
-          <button style={{ background: 'maroon', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={logout}>Log out</button>
+          <input
+            className="input-text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+
+          <select
+            value={sex}
+            onChange={(e) => setSex(e.target.value)}
+            className="input-select"
+          >
+            <option value="m">Male</option>
+            <option value="f">Female</option>
+          </select>
+
+          <button className="btn-primary" type="button" onClick={createReptile}>
+            Add Reptile
+          </button>
         </div>
-      ) : 
-      (
-        <div>
-          <p>you aren't logged in</p>  
-          <button type="button" onClick={() => navigate("/login")}>Login</button>
-          <button  type="button" onClick={() => navigate("/signup")}>Sign Up</button>
+      </div>
+
+      <div className="dashboard-content">
+        <div className="reptile-list">
+          {reptiles.map((reptile) => (
+            <div key={reptile.id} className="reptile-card">
+              <h4>{reptile.name}</h4>
+              <p>
+                <strong>Species:</strong> {formatSpeciesName(reptile.species)}
+              </p>
+              <p>
+                <strong>Sex:</strong> {reptile.sex === "m" ? "Male" : "Female"}
+              </p>
+              <div className="reptile-buttons">
+                <button
+                  className="btn-info"
+                  onClick={() => navigate(`/reptile/${reptile.id}`)}
+                >
+                  View Info
+                </button>
+                <button
+                  className="btn-danger"
+                  onClick={() => deleteReptile(reptile.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
+
+        <div className="task-list">
+          <h3>Today's Tasks</h3>
+          {tasks.length === 0 ? (
+            <p className="no-tasks">No tasks for today.</p>
+          ) : (
+            tasks.map((task, index) => <p key={index}>{task}</p>)
+          )}
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};

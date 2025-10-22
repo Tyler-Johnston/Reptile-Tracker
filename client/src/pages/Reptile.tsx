@@ -1,421 +1,312 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import "../styles/Reptile.css";
 
 interface Schedule {
-  id: number,
-  type: string,
-  description: string,
-  monday: boolean,
-  tuesday: boolean,
-  wednesday: boolean,
-  thursday: boolean,
-  friday: boolean,
-  saturday: boolean,
-  sunday: boolean,
+  id: number;
+  type: string;
+  description: string;
+  monday: boolean;
+  tuesday: boolean;
+  wednesday: boolean;
+  thursday: boolean;
+  friday: boolean;
+  saturday: boolean;
+  sunday: boolean;
 }
 
 interface Husbandry {
-  id: number,
-  length: number,
-  weight: number,
-  temperature: number,
-  humidity: number
+  id: number;
+  length: number;
+  weight: number;
+  temperature: number;
+  humidity: number;
 }
 
 interface Feeding {
-  id: number,
-  foodItem: string
+  id: number;
+  foodItem: string;
 }
 
-export const Reptile = () => {
+export const Reptile: React.FC = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  // List Data for Schedules, Husbandries, and Feedings
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [husbandries, setHusbandry] = useState<Husbandry[]>([]);
   const [feedings, setFeedings] = useState<Feeding[]>([]);
 
-  // Feeding Data
   const [foodItem, setFoodItem] = useState("");
-
-  // Husbandry Data
   const [length, setLength] = useState(1);
   const [weight, setWeight] = useState(1);
   const [temperature, setTemperature] = useState(1);
   const [humidity, setHumidity] = useState(1);
 
-  // Schedule Data
   const [type, setType] = useState("feed");
   const [description, setDescription] = useState("");
-  const [monday, setMonday] = useState(false);
-  const [tuesday, setTuesday] = useState(false);
-  const [wednesday, setWednesday] = useState(false);
-  const [thursday, setThursday] = useState(false);
-  const [friday, setFriday] = useState(false);
-  const [saturday, setSaturday] = useState(false);
-  const [sunday, setSunday] = useState(false);
+  const [days, setDays] = useState<Record<string, boolean>>({
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+    sunday: false,
+  });
 
-  // Update Reptile Data
   const [species, setSpecies] = useState("ball_python");
   const [name, setName] = useState("");
   const [sex, setSex] = useState("m");
 
+  const capitalize = (str: string) =>
+    str.split("_").map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(" ");
+
+  async function fetchData() {
+    await Promise.all([getAllFeedings(), getAllSchedules(), getAllHusbandries()]);
+  }
+
   async function getAllFeedings() {
-    const result = await fetch(`http://localhost:8000/feeding/${id}`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include"
+    const res = await fetch(`http://localhost:8000/feeding/${id}`, {
+      credentials: "include",
     });
-    const feedingeData = await result.json();
-    setFeedings(feedingeData.feedings);
+    const data = await res.json();
+    setFeedings(data.feedings || []);
   }
 
   async function getAllSchedules() {
-    const result = await fetch(`http://localhost:8000/schedule/${id}`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include"
+    const res = await fetch(`http://localhost:8000/schedule/${id}`, {
+      credentials: "include",
     });
-    const scheduleData = await result.json();
-    setSchedules(scheduleData.schedules);
+    const data = await res.json();
+    setSchedules(data.schedules || []);
   }
 
   async function getAllHusbandries() {
-    const result = await fetch(`http://localhost:8000/husbandry/${id}`, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include"
-    });
-    const husbandryData = await result.json();
-    setHusbandry(husbandryData.data);
-  }
-
-  async function createFeeding() {
-
-    const body = {
-      foodItem
-    }
-
-    const result = await fetch(`http://localhost:8000/feeding/${id}`, {
-      method: 'post',
-      headers: {
-        "Content-Type": "application/json"
-      },
+    const res = await fetch(`http://localhost:8000/husbandry/${id}`, {
       credentials: "include",
-      body: JSON.stringify(body)
     });
-    const feedingData = await result.json()
-    const feeding = feedingData.feeding;
-    if (feeding != undefined) {
-      setFeedings([...feedings, feeding]);
-    }
-    else {
-      alert("add a food item to the feedings")
-    }
+    const data = await res.json();
+    setHusbandry(data.data || []);
   }
-
-  async function createSchedule() {
-
-    const body = {
-      type,
-      description,
-      monday,
-      tuesday,
-      wednesday,
-      thursday,
-      friday,
-      saturday,
-      sunday,
-    }
-
-    const result = await fetch(`http://localhost:8000/schedule/${id}`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(body)
-    });
-    const schedulesData = await result.json()
-    const schedule = schedulesData.schedule;
-    if (schedule != undefined) {
-      setSchedules([...schedules, schedule])
-    }
-    else {
-      alert("add a description to the schedule")
-    }
-  }
-
-  async function createHusbandry() {
- 
-    const body = {
-      length,
-      weight,
-      temperature,
-      humidity
-    }
-
-    const result = await fetch(`http://localhost:8000/husbandry/${id}`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(body)
-    });
-    const husbandryData = await result.json()
-    const husbandry = husbandryData.husbandry;
-    setHusbandry([...husbandries, husbandry]);
-  }
-
-  async function updateReptile() {
-
-    const body = {
-      species,
-      name,
-      sex
-    }
-
-    if (name === "" || name === undefined) {
-      alert("make sure the reptile has a name")
-    }
-    else {
-      const result = await fetch(`http://localhost:8000/reptile/${id}`, {
-        method: "put",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(body)
-      })
-    }
-  }
-
-  useEffect(() => {
-    getAllSchedules();
-    getAllHusbandries();
-    getAllFeedings();
-    checkNotLoggedIn();
-  }, [])
-
-  const navigate = useNavigate();
 
   async function checkNotLoggedIn() {
     const result = await fetch("http://localhost:8000/users/me", {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include"
+      credentials: "include",
     });
-
-    if (result.status !== 200) {
-      navigate('/');
-    }
+    if (result.status !== 200) navigate("/");
   }
 
+  useEffect(() => {
+    checkNotLoggedIn();
+    fetchData();
+  }, []);
 
-    return (
-      <div>
+  async function updateReptile() {
+    if (!name.trim()) return alert("Please add a name.");
+    const body = { species, name, sex };
+    await fetch(`http://localhost:8000/reptile/${id}`, {
+      method: "put",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    });
+  }
 
-        {/* Update Reptile */}
-        <div style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
-            <select style={{ background: '#6c757d', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} name="species" value={species} onChange={e => setSpecies(e.target.value)}>
-              <option value="ball_python">Ball Python</option>
-              <option value="king_snake">King Snake</option>
-              <option value="corn_snake">Corn Snake</option>
-              <option value="redtail_boa">Redtail Boa</option>
-            </select>
+  async function createFeeding() {
+    if (!foodItem.trim()) return alert("Add a food item.");
+    const res = await fetch(`http://localhost:8000/feeding/${id}`, {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ foodItem }),
+    });
+    const data = await res.json();
+    if (data.feeding) setFeedings([...feedings, data.feeding]);
+    setFoodItem("");
+  }
 
-            <input style={{background: 'white', color: 'black', margin:'4px', padding: '0.5rem 1rem', marginTop: '1rem' }} value={name} placeholder="name" onChange={e => setName(e.target.value)}></input>
+  async function createHusbandry() {
+    const body = { length, weight, temperature, humidity };
+    const res = await fetch(`http://localhost:8000/husbandry/${id}`, {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (data.husbandry) setHusbandry([...husbandries, data.husbandry]);
+  }
 
-            <select style={{ background: '#6c757d', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} name="sex" value={sex} onChange={e => setSex(e.target.value)}>
-              <option value="m">Male</option>
-              <option value="f">Female</option>
-            </select>
-            <br></br>
-            <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={updateReptile}>Update Reptile</button>
-          </div>
+  async function createSchedule() {
+    const body = { type, description, ...days };
+    const res = await fetch(`http://localhost:8000/schedule/${id}`, {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (data.schedule) setSchedules([...schedules, data.schedule]);
+  }
 
-        {/* Create new Feeding */}
-        <div style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
-          <form>
-            <label>
-              Feeding:
-              <input style={{margin:'0px 10px'}} placeholder="food item" value={foodItem} onChange={e => setFoodItem(e.target.value)} type="text" />
-            </label>
-            <br></br>
-            <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={createFeeding}>Add feeding</button>
-          </form>
+  return (
+    <div className="reptile-container">
+      <h2 className="page-title">Manage Reptile</h2>
+
+      {/* Update Reptile */}
+      <section className="card-section">
+        <h3>Update Reptile Info</h3>
+        <div className="form-row">
+          <select value={species} onChange={(e) => setSpecies(e.target.value)}>
+            <option value="ball_python">Ball Python</option>
+            <option value="king_snake">King Snake</option>
+            <option value="corn_snake">Corn Snake</option>
+            <option value="redtail_boa">Redtail Boa</option>
+          </select>
+          <input
+            value={name}
+            placeholder="Name"
+            onChange={(e) => setName(e.target.value)}
+          />
+          <select value={sex} onChange={(e) => setSex(e.target.value)}>
+            <option value="m">Male</option>
+            <option value="f">Female</option>
+          </select>
+          <button className="btn-primary" onClick={updateReptile}>
+            Update
+          </button>
         </div>
-        {/* Create new Husbandry */}
-        <div>
-          <form style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
-            <label>
-              Length:
-              <input style={{margin:"0px 10px"}} value={length} onChange={e => setLength(parseFloat(e.target.value))} type="number" min="1" />
-            </label>
-            <br></br>
-            <label>
-              Weight:
-              <input style={{margin:"0px 10px"}} value={weight} onChange={e => setWeight(parseFloat(e.target.value))} type="number" min="1" />
-            </label>
-            <br></br>
-            <label>
-              Temperature:
-              <input style={{margin:"0px 10px"}} value={temperature} onChange={e => setTemperature(parseFloat(e.target.value))} type="number" min="1" />
-            </label>
-            <br></br>
-            <label>
-              Humidity:
-              <input style={{margin:"0px 10px"}} value={humidity} onChange={e => setHumidity(parseFloat(e.target.value))} type="number" min="1" />
-            </label>
-            <br></br>
+      </section>
 
-            <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={createHusbandry}>Add Husbandry</button>
-          </form>
+      {/* Create new Feeding */}
+      <section className="card-section">
+        <h3>Add Feeding</h3>
+        <div className="form-row">
+          <input
+            placeholder="Food Item"
+            value={foodItem}
+            onChange={(e) => setFoodItem(e.target.value)}
+          />
+          <button className="btn-primary" onClick={createFeeding}>
+            Add Feeding
+          </button>
+        </div>
+      </section>
+
+      {/* Create Husbandry */}
+      <section className="card-section">
+        <h3>Add Husbandry Record</h3>
+        <div className="form-grid">
+          <label>
+            Length (cm)
+            <input
+              type="number"
+              value={length}
+              onChange={(e) => setLength(parseFloat(e.target.value))}
+            />
+          </label>
+          <label>
+            Weight (g)
+            <input
+              type="number"
+              value={weight}
+              onChange={(e) => setWeight(parseFloat(e.target.value))}
+            />
+          </label>
+          <label>
+            Temp (°C)
+            <input
+              type="number"
+              value={temperature}
+              onChange={(e) => setTemperature(parseFloat(e.target.value))}
+            />
+          </label>
+          <label>
+            Humidity (%)
+            <input
+              type="number"
+              value={humidity}
+              onChange={(e) => setHumidity(parseFloat(e.target.value))}
+            />
+          </label>
+          <button className="btn-primary" onClick={createHusbandry}>
+            Add
+          </button>
+        </div>
+      </section>
+
+      {/* Create Schedule */}
+      <section className="card-section">
+        <h3>Add Schedule</h3>
+        <div className="form-row">
+          <select value={type} onChange={(e) => setType(e.target.value)}>
+            <option value="feed">Feed</option>
+            <option value="clean">Clean</option>
+            <option value="record">Record</option>
+          </select>
+          <input
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
         </div>
 
-        {/* Create new Schedule */}
-        <div style={{margin:'10px', borderRadius:'9px',background:"#e0e0e0",padding:'9px'}}>
-          <form>
-            <label>
-            Task: 
-            <select style={{margin:'5px'}}name="type" value={type} onChange={e => setType(e.target.value)}>
-              <option value="feed">Feed</option>
-              <option value="clean">Clean</option>
-              <option value="record">Record</option>
-            </select>
+        <div className="days-checkboxes">
+          {Object.keys(days).map((day) => (
+            <label key={day}>
+              <input
+                type="checkbox"
+                checked={days[day]}
+                onChange={(e) =>
+                  setDays({ ...days, [day]: e.target.checked })
+                }
+              />
+              {day.charAt(0).toUpperCase() + day.slice(1)}
             </label>
-            <br></br>
-            
-            <label>
-              Description:
-              <input style={{margin:'4px'}}value={description} placeholder="feed the reptiles" onChange={e => setDescription((e.target.value))} type="text" />
-            </label>
-            <br></br>
-            <br></br>
-            <div style={{display:"flex",justifyContent:"space-around"}}>
-            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
-              Monday
-              <input value={monday ? "true" : "false"} onChange={e => setMonday(Boolean((e.target.value)))} type="checkbox" />
-            </label>
+          ))}
+        </div>
+        <button className="btn-primary" onClick={createSchedule}>
+          Add Schedule
+        </button>
+      </section>
 
-            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
-              Tuesday
-              <input value={tuesday ? "true" : "false"} onChange={e => setTuesday(Boolean((e.target.value)))} type="checkbox" />
-            </label>
+      {/* Data Lists */}
+      <div className="data-columns">
+        <div className="data-card">
+          <h3>Feedings</h3>
+          {feedings.map((f) => (
+            <p key={f.id}>{f.foodItem}</p>
+          ))}
+        </div>
 
-            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
-              Wednesday
-              <input value={wednesday ? "true" : "false"} onChange={e => setWednesday(Boolean((e.target.value)))} type="checkbox" />
-            </label>
-
-            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
-              Thursday
-              <input value={thursday ? "true" : "false"} onChange={e => setThursday(Boolean((e.target.value)))} type="checkbox" />
-            </label>
-
-            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
-              Friday
-              <input value={friday ? "true" : "false"} onChange={e => setFriday(Boolean((e.target.value)))} type="checkbox" />
-            </label>
-
-            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
-              Saturday
-              <input value={saturday ? "true" : "false"} onChange={e => setSaturday(Boolean((e.target.value)))} type="checkbox" />
-            </label>
-
-            <label style={{background:"#c5c5c5", padding:"2px 8px", borderRadius:'4px'}}>
-              Sunday
-              <input value={sunday ? "true" : "false"} onChange={e => setSunday(Boolean((e.target.value)))} type="checkbox" />
-            </label>
+        <div className="data-card">
+          <h3>Husbandry</h3>
+          {husbandries.map((h) => (
+            <div key={h.id} className="husbandry-entry">
+              <p>Length: {h.length} cm</p>
+              <p>Weight: {h.weight} g</p>
+              <p>Temp: {h.temperature} °C</p>
+              <p>Humidity: {h.humidity}%</p>
             </div>
-            <br></br>
-            <button style={{ background: '#4CAF50', color: 'white', margin:'4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }} type="button" onClick={createSchedule}>Add Schedule</button>
-            
-          </form>
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center"}}>
-          {/* View all Feedings */}
-          <div style={{ width: "33%", maxHeight: "600px", overflowY: "auto" }}>
-            <h2>Feedings</h2>
-            {feedings
-              ? feedings.map((feeding: Feeding) => (
-                  <div
-                    key={feeding.id}
-                    style={{
-                      margin: "10px",
-                      borderRadius: "9px",
-                      background: "#e0e0e0",
-                      padding: "9px"
-                    }}
-                  >
-                    <p>{feeding.foodItem}</p>
-                  </div>
-                ))
-              : ""}
-          </div>
-
-          {/* View all Husbandries */}
-          <div style={{ width: "33%", maxHeight: "600px", overflowY: "auto" }}>
-            <h2>Husbandries</h2>
-            {husbandries
-              ? husbandries.map((husbandry: Husbandry) => (
-                  <div
-                    key={husbandry.id}
-                    style={{
-                      margin: "10px",
-                      borderRadius: "9px",
-                      background: "#e0e0e0",
-                      padding: "9px"
-                    }}
-                  >
-                    <p>length: {husbandry.length}</p>
-                    <p>weight: {husbandry.weight}</p>
-                    <p>temperature: {husbandry.temperature}</p>
-                    <p>humidity: {husbandry.humidity}</p>
-                  </div>
-                ))
-              : ""}
-          </div>
-
-          {/* View all Schedules */}
-          <div style={{ width: "33%", maxHeight: "600px", overflowY: "auto" }}>
-            <h2>Schedules</h2>
-            {schedules
-              ? schedules.map((schedule: Schedule) => (
-                  <div
-                    key={schedule.id}
-                    style={{
-                      margin: "10px",
-                      borderRadius: "9px",
-                      background: "#e0e0e0",
-                      padding: "9px"
-                    }}
-                  >
-                    <h3>{schedule.type}</h3>
-                    <p>Description: {schedule.description}</p>
-                    <p>{schedule.monday ? "monday" : ""}</p>
-                    <p>{schedule.tuesday ? "tuesday" : ""}</p>
-                    <p>{schedule.wednesday ? "wednesday" : ""}</p>
-                    <p>{schedule.thursday ? "thursday" : ""}</p>
-                    <p>{schedule.friday ? "friday" : ""}</p>
-                    <p>{schedule.saturday ? "saturday" : ""}</p>
-                    <p>{schedule.sunday ? "sunday" : ""}</p>
-                  </div>
-                ))
-              : ""}
-          </div>
+          ))}
         </div>
 
+        <div className="data-card">
+          <h3>Schedules</h3>
+          {schedules.map((s) => (
+            <div key={s.id} className="schedule-entry">
+              <h4>{capitalize(s.type)}</h4>
+              <p>{s.description}</p>
+              <p className="schedule-days">
+                {Object.entries(s)
+                  .filter(([day, val]) => val === true)
+                  .map(([day]) => day.charAt(0).toUpperCase() + day.slice(1))
+                  .join(", ")}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
-    )
-  }
+    </div>
+  );
+};

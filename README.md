@@ -6,15 +6,24 @@ Reptile Tracker is a web application designed to help reptile owners efficiently
 
 ## 📸 Screenshots
 
-### Home Page
-The home page provides an overview of your reptiles and quick access to their details and records.
-![Home Page](./home.png)
+### Home / Landing Page
+This is page you encounter when you first launch the website. It will prompt you to log in or to sign up.
+![Home Page](./Images/home.png)
+
+### Dashboard Page
+The dashboard page provides an overview of your reptiles and quick access to their details and records.
+![Dashboard Page](./Images/dashboard.png)
 
 ### Edit Reptile Page
 Easily update your reptile's details, such as name, species, and sex, through the Edit Reptile page.
-![Edit Reptile Page](./edit.png)
+![Edit Reptile Page](./Images/edit_page.png)
 
----
+### Login and Signup Pages
+These pages let you either create an account or log in to your existing account.
+![Login Page](./Images/log_in.png)
+![Signup Page](./Images/sign_up.png)
+
+
 
 ## 🎯 Features
 

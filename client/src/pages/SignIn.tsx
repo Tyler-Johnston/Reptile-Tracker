@@ -1,71 +1,83 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import "../styles/SignIn.css";
 
-
-
-
-export const SignIn = () => {
+export const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  async function checkLoggedIn() {
+  async function checkLoggedIn(): Promise<void> {
     const result = await fetch("http://localhost:8000/users/me", {
       method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include"
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
     });
-
-    if (result.status === 200) {
-      navigate('/dashboard');
-    }
+    if (result.status === 200) navigate("/dashboard");
   }
 
   useEffect(() => {
     checkLoggedIn();
   }, []);
 
-  async function signIn() {
-    const body = {
-      email,
-      password
+  async function signIn(): Promise<void> {
+    if (!email || !password) {
+      alert("Please fill out both fields.");
+      return;
     }
 
-    if (email === "" || password === "") {
-      alert("you are missing input fields");
-    }
-    else {
-      const result = await fetch("http://localhost:8000/sessions", {
-        method: 'post',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify(body)
-      });
-      if (result.status === 200) {
-        navigate("/dashboard")
-      }
-      else {
-        alert("no login associated with this email and password");
-      }
+    const body = { email, password };
+    const result = await fetch("http://localhost:8000/sessions", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    });
+
+    if (result.status === 200) {
+      navigate("/dashboard");
+    } else {
+      alert("Invalid email or password.");
     }
   }
 
   return (
-    <form className="signup-form" style={{ backgroundColor: '#f2f2f2', padding: '20px', borderRadius: '4px', maxWidth: '400px', margin: '0 auto' }}>
-  <label style={{ display: 'block', fontSize: '20px', marginBottom: '10px' }}>
-    Email
-    <input value={email} onChange={e => setEmail(e.target.value)} type="email" style={{ fontSize: '16px', padding: '8px', borderRadius: '4px', border: 'none', marginBottom: '10px' }} />
-  </label>
-  <label style={{ display: 'block', fontSize: '20px', marginBottom: '10px' }}>
-    Password
-    <input value={password} onChange={e => setPassword(e.target.value)} type="password" style={{ fontSize: '16px', padding: '8px', borderRadius: '4px', border: 'none', marginBottom: '10px' }} />
-  </label>
-  <button type="button" onClick={signIn} style={{ fontSize: '18px', padding: '10px 20px', backgroundColor: '#008CBA', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Sign in</button>
-</form>
+    <div className="signin-container">
+      <div className="signin-card">
+        <h2 className="signin-title">Welcome Back</h2>
+        <p className="signin-subtitle">Log in to manage your reptiles</p>
 
-  )
-}
+        <form className="signin-form" onSubmit={(e) => e.preventDefault()}>
+          <label>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
+
+          <label>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+
+          <button type="button" className="signin-btn" onClick={signIn}>
+            Sign In
+          </button>
+        </form>
+
+        <p className="signin-footer">
+          Don’t have an account?{" "}
+          <span className="signin-link" onClick={() => navigate("/signup")}>
+            Sign up
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+};
