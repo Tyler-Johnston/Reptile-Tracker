@@ -1,22 +1,83 @@
-import {useNavigate, Outlet} from "react-router-dom"
+import { useState, useEffect } from "react";
+import { useNavigate, Outlet, useLocation } from "react-router-dom";
+import "../styles/Root.css";
 
+export const Root: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [loggedIn, setLoggedIn] = useState(false);
 
+  const showHeader = location.pathname !== "/";
 
-export const Root = () => {
-  const navigate = useNavigate()
+  async function checkLoggedIn(): Promise<void> {
+    try {
+      const result = await fetch("http://localhost:8000/users/me", {
+        method: "get",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      setLoggedIn(result.status === 200);
+    } catch (err) {
+      setLoggedIn(false);
+    }
+  }
+
+  async function signOut(): Promise<void> {
+    await fetch("http://localhost:8000/logout", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    setLoggedIn(false);
+    navigate("/");
+  }
+
+  useEffect(() => {
+    checkLoggedIn();
+  }, [location.pathname]);
 
   return (
     <>
-    <div style={{display:"flex", justifyContent:'space-between',background:"#f0f0f0"}}> 
-      <h1>Repto-Trac</h1>
-      <span style={{display:"flex", justifyContent:"right", background:"#f0f0f0"}}> 
-        <button type="button" onClick={() => navigate("/login")} style={{ background: '#4CAF50', color: 'white', margin:'16px 4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }}>Login</button>
-        <button type="button" onClick={() => navigate("/signup")} style={{ background: '#008CBA', color: 'white', margin:'16px 4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }}>Sign Up</button>
-        <button type="button" onClick={() => navigate("/")} style={{ background: '#6c757d', color: 'white', margin:'16px 4px', padding: '0.5rem 1rem', borderRadius: '0.25rem', border: 'none', marginTop: '1rem' }}>Home</button>
-      </span>
-    </div>
-    <br></br>
-      <Outlet />
+      {showHeader && (
+        <header className="app-header">
+          <h1 className="brand" onClick={() => navigate("/")}>
+            Reptile Tracker
+          </h1>
+          <nav className="nav-buttons">
+            {loggedIn ? (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={signOut}
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => navigate("/signup")}
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
+          </nav>
+        </header>
+      )}
+      <main className="app-body">
+        <Outlet />
+      </main>
     </>
-  )
-}
+  );
+};

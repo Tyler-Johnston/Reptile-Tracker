@@ -1,0 +1,19 @@
+.dashboard h2,
+.dashboard h4 {
+  color: var(--text-dark);
+}
+
+.dashboard .table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dashboard .btn-outline-success {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.dashboard .btn-outline-success:hover {
+  background-color: var(--accent-color);
+  color: white;
+}

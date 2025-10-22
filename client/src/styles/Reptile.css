@@ -1,0 +1,121 @@
+.reptile-container {
+  background-color: #f8faf8;
+  min-height: 100vh;
+  padding: 2rem 3rem;
+}
+
+.page-title {
+  color: #2d5a3f;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.card-section {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.card-section h3 {
+  color: #2d5a3f;
+  margin-bottom: 1rem;
+}
+
+.form-row,
+.form-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #333;
+}
+
+input,
+select {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 1rem;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #3b7a57;
+  box-shadow: 0 0 0 2px rgba(59, 122, 87, 0.15);
+}
+
+.btn-primary {
+  background-color: #3b7a57;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #2f6045;
+}
+
+.days-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.days-checkboxes label {
+  background: #d9e6dc;
+  border-radius: 5px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+}
+
+.data-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.data-card {
+  flex: 1;
+  min-width: 300px;
+  background: white;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.data-card h3 {
+  color: #2d5a3f;
+  margin-bottom: 1rem;
+}
+
+.schedule-entry h4 {
+  margin: 0.25rem 0;
+}
+
+.schedule-days {
+  color: #666;
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+.husbandry-entry {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
