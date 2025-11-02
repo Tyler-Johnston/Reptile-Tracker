@@ -51,6 +51,7 @@ The user is able to create an account and login to their personal account. Their
 
 **Backend**  
 - [Express.js](https://expressjs.com/) — Node.js framework powering the REST API.
+- [Prisma](https://www.prisma.io/) — An ORM (Object-Relational Mapping) that streamlines database modeling and access for Node.js applications.
 
 ## 🚀 Getting Started
 
