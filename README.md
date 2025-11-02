@@ -2,11 +2,9 @@
 
 Reptile Tracker is a web application designed to help reptile owners efficiently manage their pets' schedules, husbandry, feedings, and more. It provides a user-friendly interface for managing reptiles, tracking their care, and creating structured schedules.
 
----
-
 ## 📸 Screenshots
 
-### Home / Landing Page
+### Landing Page
 This is page you encounter when you first launch the website. It will prompt you to log in or to sign up.
 ![Home Page](./Images/home.png)
 
@@ -18,9 +16,8 @@ The dashboard page provides an overview of your reptiles and quick access to the
 Easily update your reptile's details, such as name, species, and sex, through the Edit Reptile page.
 ![Edit Reptile Page](./Images/edit_page.png)
 
-### Login and Signup Pages
-These pages let you either create an account or log in to your existing account.
-![Login Page](./Images/log_in.png)
+### Signup Page
+The user is able to create an account and login to their personal account. Their personal data is persisted to the database.
 ![Signup Page](./Images/sign_up.png)
 
 
@@ -47,7 +44,13 @@ These pages let you either create an account or log in to your existing account.
 - Create care schedules for feeding, cleaning, and record-keeping.
 - View schedules for individual reptiles or all reptiles at once.
 
----
+## 🧠 Tech Stack
+
+**Frontend**  
+- [Next.js](https://nextjs.org/) — React-based framework for routing and rendering.  
+
+**Backend**  
+- [Express.js](https://expressjs.com/) — Node.js framework powering the REST API.
 
 ## 🚀 Getting Started
 
