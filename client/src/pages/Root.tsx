@@ -12,12 +12,10 @@ export const Root: React.FC = () => {
   async function checkLoggedIn(): Promise<void> {
     try {
       const result = await fetch("http://localhost:8000/users/me", {
-        method: "get",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
-      setLoggedIn(result.status === 200);
-    } catch (err) {
+      setLoggedIn(result.ok);
+    } catch {
       setLoggedIn(false);
     }
   }
@@ -25,7 +23,6 @@ export const Root: React.FC = () => {
   async function signOut(): Promise<void> {
     await fetch("http://localhost:8000/logout", {
       method: "post",
-      headers: { "Content-Type": "application/json" },
       credentials: "include",
     });
     setLoggedIn(false);
@@ -40,36 +37,16 @@ export const Root: React.FC = () => {
     <>
       {showHeader && (
         <header className="app-header">
-          <h1 className="brand" onClick={() => navigate("/")}>
-            Reptile Tracker
-          </h1>
+          <span className="brand" onClick={() => navigate("/")}>
+            <span className="brand-accent">Vinyl</span> Tracker
+          </span>
           <nav className="nav-buttons">
             {loggedIn ? (
-              <>
-                <button
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={signOut}
-                >
-                  Sign Out
-                </button>
-              </>
+              <button className="btn-nav-danger" onClick={signOut}>Sign Out</button>
             ) : (
               <>
-                <button
-                  type="button"
-                  className="btn btn-success"
-                  onClick={() => navigate("/login")}
-                >
-                  Login
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => navigate("/signup")}
-                >
-                  Sign Up
-                </button>
+                <button className="btn-nav-outline" onClick={() => navigate("/login")}>Log In</button>
+                <button className="btn-nav-filled" onClick={() => navigate("/signup")}>Sign Up</button>
               </>
             )}
           </nav>

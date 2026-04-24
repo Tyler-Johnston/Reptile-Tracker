@@ -9,17 +9,10 @@ export const SignUp: React.FC = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  async function checkLoggedIn(): Promise<void> {
-    const result = await fetch("http://localhost:8000/users/me", {
-      method: "get",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-    if (result.status === 200) navigate("/dashboard");
-  }
-
   useEffect(() => {
-    checkLoggedIn();
+    fetch("http://localhost:8000/users/me", { credentials: "include" })
+      .then((r) => { if (r.ok) navigate("/dashboard"); })
+      .catch(() => {});
   }, []);
 
   async function signUp(): Promise<void> {
@@ -27,15 +20,12 @@ export const SignUp: React.FC = () => {
       alert("Please fill out all fields.");
       return;
     }
-
-    const body = { firstName, lastName, email, password };
     const result = await fetch("http://localhost:8000/users", {
       method: "post",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(body),
+      body: JSON.stringify({ firstName, lastName, email, password }),
     });
-
     if (result.ok) {
       navigate("/dashboard");
     } else {
@@ -46,56 +36,36 @@ export const SignUp: React.FC = () => {
   return (
     <div className="signup-container">
       <div className="signup-card">
-        <h2 className="signup-title">Create Your Account</h2>
-        <p className="signup-subtitle">Join Reptile Tracker to start managing your reptiles</p>
+        <h2 className="signup-title">Start your collection</h2>
+        <p className="signup-subtitle">Create an account to track your vinyl</p>
 
         <form className="signup-form" onSubmit={(e) => e.preventDefault()}>
-          <label>
-            First Name
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-          </label>
-
-          <label>
-            Last Name
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-          </label>
-
+          <div className="signup-name-row">
+            <label>
+              First Name
+              <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+            </label>
+            <label>
+              Last Name
+              <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+            </label>
+          </div>
           <label>
             Email
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </label>
-
           <label>
             Password
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === "Enter" && signUp()} />
           </label>
-
           <button type="button" className="signup-btn" onClick={signUp}>
-            Sign Up
+            Create Account
           </button>
         </form>
 
         <p className="signup-footer">
           Already have an account?{" "}
-          <span className="signup-link" onClick={() => navigate("/login")}>
-            Log in
-          </span>
+          <span className="signup-link" onClick={() => navigate("/login")}>Log in</span>
         </p>
       </div>
     </div>

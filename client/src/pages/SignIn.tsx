@@ -7,17 +7,10 @@ export const SignIn: React.FC = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  async function checkLoggedIn(): Promise<void> {
-    const result = await fetch("http://localhost:8000/users/me", {
-      method: "get",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-    if (result.status === 200) navigate("/dashboard");
-  }
-
   useEffect(() => {
-    checkLoggedIn();
+    fetch("http://localhost:8000/users/me", { credentials: "include" })
+      .then((r) => { if (r.ok) navigate("/dashboard"); })
+      .catch(() => {});
   }, []);
 
   async function signIn(): Promise<void> {
@@ -25,57 +18,46 @@ export const SignIn: React.FC = () => {
       alert("Please fill out both fields.");
       return;
     }
-
-    const body = { email, password };
-    const result = await fetch("http://localhost:8000/sessions", {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(body),
-    });
-
-    if (result.status === 200) {
-      navigate("/dashboard");
-    } else {
-      alert("Invalid email or password.");
+    try {
+      const result = await fetch("http://localhost:8000/sessions", {
+        method: "post",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+      if (result.ok) {
+        navigate("/dashboard");
+      } else {
+        alert("Invalid email or password.");
+      }
+    } catch {
+      alert("Could not reach the server. Is the backend running?");
     }
   }
 
   return (
     <div className="signin-container">
       <div className="signin-card">
-        <h2 className="signin-title">Welcome Back</h2>
-        <p className="signin-subtitle">Log in to manage your reptiles</p>
+        <h2 className="signin-title">Welcome back</h2>
+        <p className="signin-subtitle">Log in to your collection</p>
 
         <form className="signin-form" onSubmit={(e) => e.preventDefault()}>
           <label>
             Email
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </label>
-
           <label>
             Password
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === "Enter" && signIn()} />
           </label>
-
           <button type="button" className="signin-btn" onClick={signIn}>
             Sign In
           </button>
         </form>
 
         <p className="signin-footer">
-          Don’t have an account?{" "}
-          <span className="signin-link" onClick={() => navigate("/signup")}>
-            Sign up
-          </span>
+          Don't have an account?{" "}
+          <span className="signin-link" onClick={() => navigate("/signup")}>Sign up</span>
         </p>
       </div>
     </div>

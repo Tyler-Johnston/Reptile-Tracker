@@ -2,50 +2,82 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #f0f0f0;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #ddd;
+  background-color: var(--color-navy);
+  padding: 0.9rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .brand {
-  font-size: 1.8rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #2f4f2f;
+  color: #ffffff;
   cursor: pointer;
   margin: 0;
+  letter-spacing: -0.01em;
+  user-select: none;
 }
 
-.nav-buttons .btn {
-  margin-left: 0.75rem;
+.brand-accent {
+  color: var(--color-gold);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-nav-outline {
+  background: transparent;
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.btn-nav-outline:hover {
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.btn-nav-filled {
+  background: var(--color-gold);
+  color: var(--color-navy);
   border: none;
   border-radius: 6px;
-  padding: 0.5rem 1rem;
-  font-weight: 500;
+  padding: 0.4rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.btn-success {
-  background-color: #4caf50;
-  color: white;
+.btn-nav-filled:hover {
+  background: var(--color-gold-hover);
 }
 
-.btn-primary {
-  background-color: #008cba;
-  color: white;
+.btn-nav-danger {
+  background: transparent;
+  color: #ff8a80;
+  border: 1.5px solid rgba(255, 138, 128, 0.4);
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-nav-danger:hover {
+  border-color: rgba(255, 138, 128, 0.9);
+  color: #ff5252;
 }
 
 .app-body {
-  padding: 2rem;
-}
-
-.btn-danger {
-  background-color: #d9534f;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.5rem 1rem;
-  margin-left: 0.75rem;
-}
-
-.btn-danger:hover {
-  background-color: #c9302c;
+  min-height: calc(100vh - 55px);
 }

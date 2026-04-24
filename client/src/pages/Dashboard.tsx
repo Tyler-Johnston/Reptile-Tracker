@@ -2,204 +2,356 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
 
-interface Reptile {
+const BASE = "http://localhost:8000";
+
+const GRADES = ["MINT", "NEAR_MINT", "VERY_GOOD_PLUS", "VERY_GOOD", "GOOD_PLUS", "GOOD", "FAIR", "POOR"];
+const GRADE_LABEL: Record<string, string> = {
+  MINT: "Mint (M)",
+  NEAR_MINT: "Near Mint (NM)",
+  VERY_GOOD_PLUS: "Very Good+ (VG+)",
+  VERY_GOOD: "Very Good (VG)",
+  GOOD_PLUS: "Good+ (G+)",
+  GOOD: "Good (G)",
+  FAIR: "Fair (F)",
+  POOR: "Poor (P)",
+};
+const GRADE_SHORT: Record<string, string> = {
+  MINT: "M", NEAR_MINT: "NM", VERY_GOOD_PLUS: "VG+",
+  VERY_GOOD: "VG", GOOD_PLUS: "G+", GOOD: "G", FAIR: "F", POOR: "P",
+};
+
+interface VinylRecord {
   id: number;
-  species: string;
-  name: string;
-  sex: string;
+  artist: string;
+  title: string;
+  year: number | null;
+  label: string | null;
+  genre: string | null;
+  coverArtUrl: string | null;
+  mediaGrade: string;
+  sleeveGrade: string;
+  status: string;
 }
 
-interface Schedule {
-  id: number;
-  reptileId: number;
-  type: string;
-  description: string;
-  monday: boolean;
-  tuesday: boolean;
-  wednesday: boolean;
-  thursday: boolean;
-  friday: boolean;
-  saturday: boolean;
-  sunday: boolean;
+interface DiscogsResult {
+  discogsId: number;
+  title: string;
+  year: string | null;
+  label: string | null;
+  genre: string | null;
+  country: string | null;
+  coverImage: string | null;
+  thumb: string | null;
 }
 
 export const Dashboard: React.FC = () => {
-  const [species, setSpecies] = useState("ball_python");
-  const [name, setName] = useState("");
-  const [sex, setSex] = useState("m");
-  const [reptiles, setReptiles] = useState<Reptile[]>([]);
-  const [tasks, setTasks] = useState<string[]>([]);
+  const [records, setRecords] = useState<VinylRecord[]>([]);
+  const [filter, setFilter] = useState<"ALL" | "OWNED" | "WANTED">("ALL");
   const navigate = useNavigate();
 
-  async function createReptile(): Promise<void> {
-    if (!name.trim()) {
-      alert("Please enter a name for your reptile.");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<DiscogsResult[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [selectedResult, setSelectedResult] = useState<DiscogsResult | null>(null);
+
+  const [artist, setArtist] = useState("");
+  const [title, setTitle] = useState("");
+  const [year, setYear] = useState("");
+  const [label, setLabel] = useState("");
+  const [genre, setGenre] = useState("");
+  const [pressingCountry, setPressingCountry] = useState("");
+  const [coverArtUrl, setCoverArtUrl] = useState("");
+  const [mediaGrade, setMediaGrade] = useState("VERY_GOOD_PLUS");
+  const [sleeveGrade, setSleeveGrade] = useState("VERY_GOOD_PLUS");
+  const [status, setStatus] = useState("OWNED");
+  const [isCleaned, setIsCleaned] = useState(false);
+  const [hasAntiStaticSleeve, setHasAntiStaticSleeve] = useState(false);
+
+  async function checkAuth() {
+    const res = await fetch(`${BASE}/users/me`, { credentials: "include" });
+    if (!res.ok) navigate("/");
+  }
+
+  async function getAllRecords() {
+    const res = await fetch(`${BASE}/records`, { credentials: "include" });
+    const data = await res.json();
+    setRecords(data.records || []);
+  }
+
+  async function deleteRecord(id: number) {
+    await fetch(`${BASE}/records/${id}`, { method: "delete", credentials: "include" });
+    setRecords((prev) => prev.filter((r) => r.id !== id));
+  }
+
+  async function searchDiscogs() {
+    if (!searchQuery.trim()) return;
+    setSearchLoading(true);
+    try {
+      const res = await fetch(
+        `${BASE}/discogs/search?q=${encodeURIComponent(searchQuery)}`,
+        { credentials: "include" }
+      );
+      const data = await res.json();
+      setSearchResults(data.results || []);
+    } finally {
+      setSearchLoading(false);
+    }
+  }
+
+  function selectResult(result: DiscogsResult) {
+    setSelectedResult(result);
+    setSearchResults([]);
+    setSearchQuery("");
+    const parts = result.title.split(" - ");
+    if (parts.length >= 2) {
+      setArtist(parts[0].trim());
+      setTitle(parts.slice(1).join(" - ").trim());
+    } else {
+      setTitle(result.title);
+    }
+    setYear(result.year ?? "");
+    setLabel(result.label ?? "");
+    setGenre(result.genre ?? "");
+    setPressingCountry(result.country ?? "");
+    setCoverArtUrl(result.coverImage ?? "");
+  }
+
+  function clearForm() {
+    setSelectedResult(null);
+    setArtist(""); setTitle(""); setYear(""); setLabel("");
+    setGenre(""); setPressingCountry(""); setCoverArtUrl("");
+    setMediaGrade("VERY_GOOD_PLUS"); setSleeveGrade("VERY_GOOD_PLUS");
+    setStatus("OWNED"); setIsCleaned(false); setHasAntiStaticSleeve(false);
+  }
+
+  async function createRecord() {
+    if (!artist.trim() || !title.trim()) {
+      alert("Artist and title are required.");
       return;
     }
-    const body = { species, name, sex };
-
-    const result = await fetch("http://localhost:8000/reptile", {
+    const res = await fetch(`${BASE}/records`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        artist, title,
+        year: year ? parseInt(year) : undefined,
+        label: label || undefined,
+        genre: genre || undefined,
+        pressingCountry: pressingCountry || undefined,
+        coverArtUrl: coverArtUrl || undefined,
+        mediaGrade, sleeveGrade, status, isCleaned, hasAntiStaticSleeve,
+      }),
     });
-
-    const reptileData = await result.json();
-    const reptile = reptileData.reptile;
-    if (reptile) setReptiles((prev) => [...prev, reptile]);
+    const data = await res.json();
+    if (data.record) {
+      setRecords((prev) => [data.record, ...prev]);
+      clearForm();
+    }
   }
-
-  async function getAllReptiles(): Promise<void> {
-    const result = await fetch("http://localhost:8000/reptile", {
-      method: "get",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-    const data = await result.json();
-    setReptiles(data.reptiles || []);
-  }
-
-  async function deleteReptile(id: number): Promise<void> {
-    await fetch(`http://localhost:8000/reptile/${id}`, {
-      method: "delete",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-    setReptiles((prev) => prev.filter((r) => r.id !== id));
-  }
-
-  async function getTodaySchedule(): Promise<void> {
-    const result = await fetch("http://localhost:8000/schedule", {
-      method: "get",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-    const today = new Date().toLocaleDateString("en-US", {
-      weekday: "long",
-    }).toLowerCase();
-
-    const scheduleData = await result.json();
-    setTasks([]);
-
-    scheduleData.schedules.forEach((schedule: Schedule) => {
-      if (schedule[today as keyof Schedule]) {
-        const reptile = reptiles.find((r) => r.id === schedule.reptileId);
-        if (reptile) {
-          setTasks((prev) => [...prev, `${reptile.name}: ${schedule.description}`]);
-        }
-      }
-    });
-  }
-
-  async function checkNotLoggedIn(): Promise<void> {
-    const result = await fetch("http://localhost:8000/users/me", {
-      method: "get",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-    if (result.status !== 200) navigate("/");
-  }
-
-  function formatSpeciesName(species: string): string {
-    return species
-      .split("_")
-      .map((word) =>
-        word.charAt(0).toUpperCase() + word.slice(1)
-      )
-      .join(" ");
-  }
-
 
   useEffect(() => {
-    getAllReptiles();
-    checkNotLoggedIn();
+    checkAuth();
+    getAllRecords();
   }, []);
-
-  useEffect(() => {
-    if (reptiles.length > 0) getTodaySchedule();
-  }, [reptiles]);
 
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h2>My Reptiles</h2>
+        <div>
+          <h2 className="dashboard-title">My Collection</h2>
+          <p className="dashboard-subtitle">
+            {records.length > 0
+              ? `${records.length} record${records.length !== 1 ? "s" : ""}`
+              : "No records yet"}
+          </p>
+        </div>
       </div>
 
-      <div className="dashboard-form">
-        <h3>Add a New Reptile</h3>
-        <div className="form-row">
-          <select
-            value={species}
-            onChange={(e) => setSpecies(e.target.value)}
-            className="input-select"
-          >
-            <option value="ball_python">Ball Python</option>
-            <option value="king_snake">King Snake</option>
-            <option value="corn_snake">Corn Snake</option>
-            <option value="redtail_boa">Redtail Boa</option>
-          </select>
 
+      {/* ── Add Record Panel ── */}
+      <div className="add-record-panel">
+        <h3 className="panel-heading">Add a Record</h3>
+
+        {/* Discogs search */}
+        <div className="search-row">
           <input
-            className="input-text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            className="search-input"
+            placeholder="Search by artist, album, or label…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && searchDiscogs()}
           />
+          <button className="btn-search" onClick={searchDiscogs} disabled={searchLoading}>
+            {searchLoading ? "Searching…" : "Search"}
+          </button>
+        </div>
 
-          <select
-            value={sex}
-            onChange={(e) => setSex(e.target.value)}
-            className="input-select"
-          >
-            <option value="m">Male</option>
-            <option value="f">Female</option>
-          </select>
+        {searchResults.length > 0 && (
+          <ul className="search-results">
+            {searchResults.map((r) => (
+              <li key={r.discogsId} className="search-result-item" onClick={() => selectResult(r)}>
+                {r.thumb
+                  ? <img src={r.thumb} alt="" className="result-thumb" />
+                  : <div className="result-thumb-placeholder">♪</div>
+                }
+                <div className="result-text">
+                  <strong>{r.title}</strong>
+                  <span className="result-meta">{[r.year, r.label, r.country].filter(Boolean).join(" · ")}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
 
-          <button className="btn-primary" type="button" onClick={createReptile}>
-            Add Reptile
+        {selectedResult && (
+          <div className="selected-preview">
+            {selectedResult.thumb && (
+              <img src={selectedResult.thumb} alt="" className="preview-thumb" />
+            )}
+            <div className="preview-info">
+              <span className="preview-title">{selectedResult.title}</span>
+              <span className="preview-meta">{[selectedResult.year, selectedResult.label].filter(Boolean).join(" · ")}</span>
+            </div>
+            <button className="btn-clear-selection" onClick={clearForm}>✕ Clear</button>
+          </div>
+        )}
+
+        {/* Record Details */}
+        <p className="section-label">Record Details</p>
+        <div className="fields-grid-2">
+          <label className="field">
+            <span>Artist *</span>
+            <input value={artist} onChange={(e) => setArtist(e.target.value)} placeholder="e.g. Miles Davis" />
+          </label>
+          <label className="field">
+            <span>Title *</span>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Kind of Blue" />
+          </label>
+          <label className="field">
+            <span>Label</span>
+            <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Columbia" />
+          </label>
+          <label className="field">
+            <span>Genre</span>
+            <input value={genre} onChange={(e) => setGenre(e.target.value)} placeholder="e.g. Jazz" />
+          </label>
+          <label className="field">
+            <span>Year</span>
+            <input value={year} onChange={(e) => setYear(e.target.value)} placeholder="e.g. 1959" />
+          </label>
+          <label className="field">
+            <span>Pressing Country</span>
+            <input value={pressingCountry} onChange={(e) => setPressingCountry(e.target.value)} placeholder="e.g. US" />
+          </label>
+        </div>
+
+        {/* Condition */}
+        <p className="section-label">Condition</p>
+        <div className="condition-row">
+          <label className="field">
+            <span>Media Grade</span>
+            <select value={mediaGrade} onChange={(e) => setMediaGrade(e.target.value)}>
+              {GRADES.map((g) => <option key={g} value={g}>{GRADE_LABEL[g]}</option>)}
+            </select>
+          </label>
+          <label className="field">
+            <span>Sleeve Grade</span>
+            <select value={sleeveGrade} onChange={(e) => setSleeveGrade(e.target.value)}>
+              {GRADES.map((g) => <option key={g} value={g}>{GRADE_LABEL[g]}</option>)}
+            </select>
+          </label>
+          <label className="field">
+            <span>Status</span>
+            <select value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option value="OWNED">Owned</option>
+              <option value="WANTED">Wanted</option>
+            </select>
+          </label>
+          <label className="checkbox-toggle">
+            <input type="checkbox" checked={isCleaned} onChange={(e) => setIsCleaned(e.target.checked)} />
+            <span>Cleaned</span>
+          </label>
+          <label className="checkbox-toggle">
+            <input type="checkbox" checked={hasAntiStaticSleeve} onChange={(e) => setHasAntiStaticSleeve(e.target.checked)} />
+            <span>Anti-static Sleeve</span>
+          </label>
+        </div>
+
+        <div className="panel-footer">
+          <button className="btn-add-record" onClick={createRecord}>
+            Add to Collection
           </button>
         </div>
       </div>
 
-      <div className="dashboard-content">
-        <div className="reptile-list">
-          {reptiles.map((reptile) => (
-            <div key={reptile.id} className="reptile-card">
-              <h4>{reptile.name}</h4>
-              <p>
-                <strong>Species:</strong> {formatSpeciesName(reptile.species)}
-              </p>
-              <p>
-                <strong>Sex:</strong> {reptile.sex === "m" ? "Male" : "Female"}
-              </p>
-              <div className="reptile-buttons">
+      {/* ── Collection filter toolbar ── */}
+      {records.length > 0 && (
+        <div className="collection-toolbar">
+          <div className="filter-tabs">
+            {(["ALL", "OWNED", "WANTED"] as const).map((f) => {
+              const count = f === "ALL" ? records.length : records.filter((r) => r.status === f).length;
+              return (
                 <button
-                  className="btn-info"
-                  onClick={() => navigate(`/reptile/${reptile.id}`)}
+                  key={f}
+                  className={`filter-tab${filter === f ? " active" : ""}`}
+                  onClick={() => setFilter(f)}
                 >
-                  View Info
+                  {f === "ALL" ? "All" : f.charAt(0) + f.slice(1).toLowerCase()}
+                  <span className="filter-count">{count}</span>
                 </button>
-                <button
-                  className="btn-danger"
-                  onClick={() => deleteReptile(reptile.id)}
-                >
-                  Delete
-                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── Record Grid ── */}
+      {records.length === 0 ? (
+        <div className="empty-collection">
+          <p>Your collection is empty.</p>
+          <p className="empty-hint">Search above to add your first record.</p>
+        </div>
+      ) : (
+        <div className="record-grid">
+          {records.filter((r) => filter === "ALL" || r.status === filter).map((record) => (
+            <div key={record.id} className="record-card">
+              <div className="record-cover-wrap">
+                {record.coverArtUrl
+                  ? <img src={record.coverArtUrl} alt={`${record.artist} – ${record.title}`} className="record-cover" />
+                  : <div className="record-cover-placeholder">♪</div>
+                }
+                <span className={`status-chip status-${record.status.toLowerCase()}`}>
+                  {record.status}
+                </span>
+              </div>
+              <div className="record-body">
+                <p className="record-artist">{record.artist}</p>
+                <p className="record-album">{record.title}</p>
+                <p className="record-meta">
+                  {[record.year, record.label].filter(Boolean).join(" · ") || <>&nbsp;</>}
+                </p>
+                <div className="grade-chips">
+                  <span className="grade-chip" title="Media grade">
+                    {GRADE_SHORT[record.mediaGrade]}
+                  </span>
+                  <span className="grade-chip grade-chip-sleeve" title="Sleeve grade">
+                    {GRADE_SHORT[record.sleeveGrade]}
+                  </span>
+                </div>
+                <div className="record-actions">
+                  <button className="btn-view" onClick={() => navigate(`/record/${record.id}`)}>
+                    View Record
+                  </button>
+                  <button className="btn-delete" onClick={() => deleteRecord(record.id)} title="Remove from collection">
+                    ✕
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
-
-        <div className="task-list">
-          <h3>Today's Tasks</h3>
-          {tasks.length === 0 ? (
-            <p className="no-tasks">No tasks for today.</p>
-          ) : (
-            tasks.map((task, index) => <p key={index}>{task}</p>)
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -6,16 +6,18 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { v4 as uuidv4 } from 'uuid';
 import { usersController } from "./controllers/users_controller";
-import { reptilesController } from "./controllers/reptiles_controller";
-import { feedingController } from "./controllers/feeding_controller";
-import { husbandryController } from "./controllers/husbandry_controller";
-import { scheduleController } from "./controllers/schedule_controller";
+import { recordsController } from "./controllers/records_controller";
+import { playLogController } from "./controllers/play_log_controller";
+import { discogsController } from "./controllers/discogs_controller";
 
 dotenv.config();
 const client = new PrismaClient();
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+  credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -34,7 +36,6 @@ app.post("/sessions",  async (req, res) => {
     },
     include: {
       sessions: true,
-      reptiles: true
     }
   });
 
@@ -94,10 +95,9 @@ app.post("/logout", async (req, res) => {
 
 
 usersController(app, client);
-reptilesController(app, client);
-feedingController(app, client);
-scheduleController(app, client);
-husbandryController(app, client);
+recordsController(app, client);
+playLogController(app, client);
+discogsController(app, client);
 
 app.listen(parseInt(process.env.PORT || "3000", 10), () => {
   console.log(`App running on port ${process.env.PORT}`);
