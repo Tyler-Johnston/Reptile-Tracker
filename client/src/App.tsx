@@ -5,6 +5,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { SignUp } from "./pages/SignUp";
 import { SignIn } from "./pages/SignIn";
 import { RecordPage } from "./pages/Record";
+import { StatsPage } from "./pages/Stats";
 import { Error } from "./pages/Error";
 
 const router = createBrowserRouter([
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
       { path: "signup", element: <SignUp /> },
       { path: "login", element: <SignIn /> },
       { path: "record/:id", element: <RecordPage /> },
+      { path: "stats", element: <StatsPage /> },
       { path: "*", element: <Error /> },
     ],
   },

@@ -61,6 +61,22 @@
   background: var(--color-gold-hover);
 }
 
+.btn-nav-ghost {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-nav-ghost:hover {
+  color: #ffffff;
+}
+
 .btn-nav-danger {
   background: transparent;
   color: #ff8a80;

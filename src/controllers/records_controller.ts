@@ -109,9 +109,63 @@ const deleteRecord = (client: PrismaClient): RequestHandler =>
     res.json({ record });
   };
 
+const getStats = (client: PrismaClient): RequestHandler =>
+  async (req: RequestWithSession, res) => {
+    const records = await client.vinylRecord.findMany({
+      where: { userId: req.user.id },
+    });
+
+    const recordIds = records.map((r) => r.id);
+    const playLogs = recordIds.length
+      ? await client.playLog.findMany({ where: { vinylRecordId: { in: recordIds } } })
+      : [];
+
+    const totalRecords = records.length;
+    const uniqueArtists = new Set(records.map((r) => r.artist)).size;
+    const totalPlays = playLogs.length;
+    const ownedCount = records.filter((r) => r.status === "OWNED").length;
+    const wantedCount = records.filter((r) => r.status === "WANTED").length;
+
+    const genreMap: Record<string, number> = {};
+    for (const r of records) {
+      const g = r.genre || "Unknown";
+      genreMap[g] = (genreMap[g] || 0) + 1;
+    }
+    const genreBreakdown = Object.entries(genreMap)
+      .map(([genre, count]) => ({ genre, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8);
+
+    const decadeMap: Record<string, number> = {};
+    for (const r of records) {
+      if (r.year) {
+        const decade = `${Math.floor(r.year / 10) * 10}s`;
+        decadeMap[decade] = (decadeMap[decade] || 0) + 1;
+      }
+    }
+    const decadeBreakdown = Object.entries(decadeMap)
+      .map(([decade, count]) => ({ decade, count }))
+      .sort((a, b) => a.decade.localeCompare(b.decade));
+
+    const activityMap: Record<string, number> = {};
+    for (let i = 0; i < 30; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - (29 - i));
+      activityMap[d.toISOString().slice(0, 10)] = 0;
+    }
+    for (const log of playLogs) {
+      const date = new Date(log.playedAt).toISOString().slice(0, 10);
+      if (activityMap[date] !== undefined) activityMap[date]++;
+    }
+    const recentActivity = Object.entries(activityMap).map(([date, plays]) => ({ date, plays }));
+
+    res.json({ totalRecords, uniqueArtists, totalPlays, ownedCount, wantedCount, genreBreakdown, decadeBreakdown, recentActivity });
+  };
+
 export const recordsController = controller("records", [
   { path: "/", method: "post", endpointBuilder: createRecord, skipAuth: false },
   { path: "/", method: "get", endpointBuilder: getAllRecords, skipAuth: false },
+  { path: "/stats", method: "get", endpointBuilder: getStats, skipAuth: false },
   { path: "/:recordId", method: "get", endpointBuilder: getRecord, skipAuth: false },
   { path: "/:recordId", method: "put", endpointBuilder: updateRecord, skipAuth: false },
   { path: "/:recordId", method: "delete", endpointBuilder: deleteRecord, skipAuth: false },

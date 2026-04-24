@@ -42,7 +42,11 @@ export const Root: React.FC = () => {
           </span>
           <nav className="nav-buttons">
             {loggedIn ? (
-              <button className="btn-nav-danger" onClick={signOut}>Sign Out</button>
+              <>
+                <button className="btn-nav-ghost" onClick={() => navigate("/dashboard")}>Collection</button>
+                <button className="btn-nav-ghost" onClick={() => navigate("/stats")}>Stats</button>
+                <button className="btn-nav-danger" onClick={signOut}>Sign Out</button>
+              </>
             ) : (
               <>
                 <button className="btn-nav-outline" onClick={() => navigate("/login")}>Log In</button>
