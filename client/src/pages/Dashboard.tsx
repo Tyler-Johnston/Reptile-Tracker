@@ -47,6 +47,7 @@ interface DiscogsResult {
 export const Dashboard: React.FC = () => {
   const [records, setRecords] = useState<VinylRecord[]>([]);
   const [filter, setFilter] = useState<"ALL" | "OWNED" | "WANTED">("ALL");
+  const [view, setView] = useState<"grid" | "table">("grid");
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -303,16 +304,20 @@ export const Dashboard: React.FC = () => {
               );
             })}
           </div>
+          <div className="view-toggle">
+            <button className={`view-btn${view === "grid" ? " active" : ""}`} onClick={() => setView("grid")} title="Grid view">⊞</button>
+            <button className={`view-btn${view === "table" ? " active" : ""}`} onClick={() => setView("table")} title="Table view">☰</button>
+          </div>
         </div>
       )}
 
-      {/* ── Record Grid ── */}
+      {/* ── Record Grid / Table ── */}
       {records.length === 0 ? (
         <div className="empty-collection">
           <p>Your collection is empty.</p>
           <p className="empty-hint">Search above to add your first record.</p>
         </div>
-      ) : (
+      ) : view === "grid" ? (
         <div className="record-grid">
           {records.filter((r) => filter === "ALL" || r.status === filter).map((record) => (
             <div key={record.id} className="record-card">
@@ -332,24 +337,51 @@ export const Dashboard: React.FC = () => {
                   {[record.year, record.label].filter(Boolean).join(" · ") || <>&nbsp;</>}
                 </p>
                 <div className="grade-chips">
-                  <span className="grade-chip" title="Media grade">
-                    {GRADE_SHORT[record.mediaGrade]}
-                  </span>
-                  <span className="grade-chip grade-chip-sleeve" title="Sleeve grade">
-                    {GRADE_SHORT[record.sleeveGrade]}
-                  </span>
+                  <span className="grade-chip" title="Media grade">{GRADE_SHORT[record.mediaGrade]}</span>
+                  <span className="grade-chip grade-chip-sleeve" title="Sleeve grade">{GRADE_SHORT[record.sleeveGrade]}</span>
                 </div>
                 <div className="record-actions">
-                  <button className="btn-view" onClick={() => navigate(`/record/${record.id}`)}>
-                    View Record
-                  </button>
-                  <button className="btn-delete" onClick={() => deleteRecord(record.id)} title="Remove from collection">
-                    ✕
-                  </button>
+                  <button className="btn-view" onClick={() => navigate(`/record/${record.id}`)}>View Record</button>
+                  <button className="btn-delete" onClick={() => deleteRecord(record.id)} title="Remove">✕</button>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      ) : (
+        <div className="record-table-wrap">
+          <table className="record-table">
+            <thead>
+              <tr>
+                <th>Artist</th>
+                <th>Title</th>
+                <th>Year</th>
+                <th>Label</th>
+                <th>Genre</th>
+                <th>Media</th>
+                <th>Sleeve</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {records.filter((r) => filter === "ALL" || r.status === filter).map((record) => (
+                <tr key={record.id} className="record-row" onClick={() => navigate(`/record/${record.id}`)}>
+                  <td className="td-artist">{record.artist}</td>
+                  <td className="td-title">{record.title}</td>
+                  <td className="td-num">{record.year ?? "—"}</td>
+                  <td>{record.label ?? "—"}</td>
+                  <td>{record.genre ?? "—"}</td>
+                  <td className="td-num"><span className="grade-chip">{GRADE_SHORT[record.mediaGrade]}</span></td>
+                  <td className="td-num"><span className="grade-chip grade-chip-sleeve">{GRADE_SHORT[record.sleeveGrade]}</span></td>
+                  <td><span className={`status-chip-inline status-${record.status.toLowerCase()}`}>{record.status}</span></td>
+                  <td className="td-actions" onClick={(e) => e.stopPropagation()}>
+                    <button className="btn-delete" onClick={() => deleteRecord(record.id)} title="Remove">✕</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

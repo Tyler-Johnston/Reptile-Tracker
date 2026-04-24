@@ -553,6 +553,117 @@
   border-color: #c62828;
 }
 
+/* ── View toggle ── */
+.view-toggle {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.view-btn {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  padding: 0.4rem 0.65rem;
+  font-size: 1rem;
+  color: var(--color-muted);
+  cursor: pointer;
+  line-height: 1;
+  transition: all 0.15s;
+}
+
+.view-btn:hover {
+  border-color: var(--color-navy);
+  color: var(--color-navy);
+}
+
+.view-btn.active {
+  background: var(--color-navy);
+  border-color: var(--color-navy);
+  color: white;
+}
+
+/* ── Table view ── */
+.record-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+
+.record-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.record-table thead th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #aaa;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.record-row {
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.record-row:not(:last-child) td {
+  border-bottom: 1px solid #f4f2ef;
+}
+
+.record-row:hover td {
+  background: #fafaf8;
+}
+
+.record-table td {
+  padding: 0.75rem 1rem;
+  color: var(--color-navy);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.td-artist {
+  font-weight: 700;
+}
+
+.td-num {
+  text-align: center;
+  color: #555 !important;
+}
+
+.td-actions {
+  width: 44px;
+  text-align: center;
+}
+
+.status-chip-inline {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* reuse status colours */
+.status-chip-inline.status-owned {
+  background: rgba(26, 26, 46, 0.1);
+  color: var(--color-navy);
+}
+
+.status-chip-inline.status-wanted {
+  background: rgba(201, 168, 76, 0.2);
+  color: #8a6820;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .dashboard-container {

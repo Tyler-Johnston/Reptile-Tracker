@@ -16,6 +16,7 @@ model User {
   lastName         String
   email            String
   passwordHash     String
+  username         String?       @unique
   isPublicProfile  Boolean       @default(false)
   bio              String        @default("")
   createdAt        DateTime      @default(now())

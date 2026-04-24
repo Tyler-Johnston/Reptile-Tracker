@@ -1,75 +1,159 @@
-# 🦎 Reptile Tracker
+# Vinyl Tracker
 
-Reptile Tracker is a web application designed to help reptile owners efficiently manage their pets' schedules, husbandry, feedings, and more. It provides a user-friendly interface for managing reptiles, tracking their care, and creating structured schedules.
+A full-stack vinyl record collection manager. Search the Discogs catalogue to auto-populate records, grade using the Goldmine standard, log plays, analyse your library with charts, and share a public profile.
 
-## 📸 Screenshots
+![Collection view](docs/screenshots/collection.png)
 
-### Landing Page
-This is page you encounter when you first launch the website. It will prompt you to log in or to sign up.
-![Home Page](./Images/home.png)
+---
 
-### Dashboard Page
-The dashboard page provides an overview of your reptiles and quick access to their details and records.
-![Dashboard Page](./Images/dashboard.png)
+## Features
 
-### Edit Reptile Page
-Easily update your reptile's details, such as name, species, and sex, through the Edit Reptile page.
-![Edit Reptile Page](./Images/edit_page.png)
+- **Discogs search** — search the full Discogs catalogue and auto-fill artist, title, year, label, genre, cover art, and pressing country
+- **Goldmine grading** — grade media and sleeve independently using the industry-standard Goldmine scale (Mint → Poor)
+- **Owned / Wanted** — tag records as owned or on your want list; filter the collection by status
+- **Grid & table views** — switch between an album-art card grid and a compact spreadsheet view
+- **Play logging** — log every time you spin a record with optional notes
+- **BI dashboard** — KPI cards (total records, unique artists, total plays), genre pie chart, decade bar chart, 30-day play activity graph
+- **Public profiles** — set a username, write a bio, and toggle a shareable public profile at `/u/<username>` showing your owned records
+- **Session auth** — cookie-based sessions with bcrypt password hashing
 
-### Signup Page
-The user is able to create an account and login to their personal account. Their personal data is persisted to the database.
-![Signup Page](./Images/sign_up.png)
+---
 
+## Screenshots
 
+### Dashboard — collection grid
+![Dashboard](docs/screenshots/dashboard.png)
 
-## 🎯 Features
+### Album art grid
+![Collection](docs/screenshots/collection.png)
 
-### User Management
-- Create and manage user accounts.
-- Log in securely to access personal reptile data.
+### Record detail & play log
+![Record Detail](docs/screenshots/record-detail.png)
 
-### Reptile Management
-- Add, update, delete, and list reptiles.
-- Track species and specific traits like name and sex.
+### Stats dashboard
+![Stats](docs/screenshots/stats.png)
 
-### Feeding Records
-- Log feedings with food items for each reptile.
-- View feeding history to ensure proper care.
+### Public profile
+![Public Profile](docs/screenshots/public-profile.png)
 
-### Husbandry Records
-- Record and track key metrics such as length, weight, temperature, and humidity.
-- Maintain historical records for each reptile's health and growth.
+### Profile settings
+![Settings](docs/screenshots/settings.png)
 
-### Scheduling
-- Create care schedules for feeding, cleaning, and record-keeping.
-- View schedules for individual reptiles or all reptiles at once.
+---
 
-## 🧠 Tech Stack
+## Tech Stack
 
-**Frontend**  
-- [Next.js](https://nextjs.org/) — React-based framework for routing and rendering.  
+**Backend**
+- Node.js + Express
+- Prisma ORM (SQLite)
+- bcrypt + cookie-based sessions
+- Discogs REST API (proxied server-side to protect the token)
 
-**Backend**  
-- [Express.js](https://expressjs.com/) — Node.js framework powering the REST API.
-- [Prisma](https://www.prisma.io/) — An ORM (Object-Relational Mapping) that streamlines database modeling and access for Node.js applications.
+**Frontend**
+- React 18 + TypeScript
+- Vite
+- React Router v6
+- Recharts
 
-## 🚀 Getting Started
+---
+
+## Getting Started
 
 ### Prerequisites
-Ensure you have `yarn` installed on your machine.
 
-### Backend Setup
-1. Navigate to the `Reptile Tracker` backend directory.
-2. Run the following commands:
-   ```bash
-   yarn
-   yarn db:migrate
-   yarn dev
-3. The backend server will start on `localhost:8000`.
+- Node.js 18+
+- Yarn
+- A free [Discogs developer token](https://www.discogs.com/settings/developers)
 
-### Frontend Setup
-1. Navigate to the `client` directory.
-2. Start the frontend server:
-   ```bash
-   yarn dev
-3. You will be prompted to navigate to a specific URL (e.g., http://localhost:5174/).
+### 1. Clone and install
+
+```bash
+git clone https://github.com/YOUR_USERNAME/vinyl-tracker.git
+cd vinyl-tracker
+
+# Backend dependencies
+yarn install
+
+# Frontend dependencies
+cd client && yarn install && cd ..
+```
+
+### 2. Configure environment
+
+Create `.env` in the project root:
+
+```env
+DATABASE_URL="file:./dev.db"
+PORT=8000
+CLIENT_ORIGIN=http://localhost:5173
+DISCOGS_TOKEN=your_discogs_token_here
+```
+
+### 3. Set up the database
+
+```bash
+./node_modules/.bin/prisma db push
+```
+
+### 4. Run
+
+Open two terminals:
+
+```bash
+# Terminal 1 — backend (project root)
+yarn dev
+
+# Terminal 2 — frontend
+cd client && yarn dev
+```
+
+Open [http://localhost:5173](http://localhost:5173), create an account, and start adding records.
+
+---
+
+## Project Structure
+
+```
+vinyl-tracker/
+├── prisma/
+│   └── schema.prisma              # User, VinylRecord, PlayLog, Session
+├── src/
+│   ├── controllers/
+│   │   ├── users_controller.ts    # Auth, public profiles, settings
+│   │   ├── records_controller.ts  # Collection CRUD + stats aggregation
+│   │   ├── play_log_controller.ts # Play history
+│   │   └── discogs_controller.ts  # Discogs API proxy
+│   ├── lib/
+│   │   └── controller.ts          # Route factory with auth middleware
+│   └── index.ts                   # Express entry, CORS, session routes
+└── client/src/
+    └── pages/
+        ├── Home.tsx       # Landing page
+        ├── Dashboard.tsx  # Collection + add record
+        ├── Record.tsx     # Record detail + play log
+        ├── Stats.tsx      # BI charts
+        ├── Settings.tsx   # Profile settings
+        └── Profile.tsx    # Public /u/:username profile
+```
+
+---
+
+## API Reference
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| `POST` | `/users` | — | Register |
+| `GET` | `/users/me` | ✓ | Current user |
+| `PUT` | `/users/me` | ✓ | Update username / bio / public toggle |
+| `GET` | `/users/profile/:username` | — | Public profile + owned records |
+| `POST` | `/sessions` | — | Log in |
+| `POST` | `/logout` | — | Log out |
+| `GET` | `/records` | ✓ | All records for current user |
+| `POST` | `/records` | ✓ | Add record |
+| `GET` | `/records/stats` | ✓ | Aggregated stats for charts |
+| `GET` | `/records/:id` | ✓ | Single record |
+| `PUT` | `/records/:id` | ✓ | Update grade / status / flags |
+| `DELETE` | `/records/:id` | ✓ | Remove from collection |
+| `GET` | `/play-log/:recordId` | ✓ | Play history for a record |
+| `POST` | `/play-log/:recordId` | ✓ | Log a play |
+| `GET` | `/discogs/search?q=` | ✓ | Proxied Discogs search |

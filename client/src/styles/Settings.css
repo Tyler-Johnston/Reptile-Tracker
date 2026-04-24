@@ -1,0 +1,241 @@
+.settings-container {
+  background: var(--color-bg);
+  min-height: 100vh;
+  padding: 2.5rem 3rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.settings-header {
+  margin-bottom: 2rem;
+}
+
+.settings-title {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--color-navy);
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.settings-subtitle {
+  color: var(--color-muted);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.settings-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 2rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.settings-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #aaa;
+  margin: 0 0 0.25rem;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.settings-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.settings-value {
+  font-size: 0.9rem;
+  color: var(--color-navy);
+}
+
+.settings-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 1.25rem 0;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.settings-field-label {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.settings-field-hint {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  margin-bottom: 0.15rem;
+}
+
+.settings-input,
+.settings-textarea {
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.93rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: vertical;
+}
+
+.settings-input:focus,
+.settings-textarea:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
+  background: white;
+}
+
+.profile-url-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: #faf8f3;
+  border: 1px solid #e8dfc8;
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+}
+
+.profile-url-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #aaa;
+}
+
+.profile-url-link {
+  font-size: 0.88rem;
+  color: var(--color-navy);
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.profile-url-link:hover {
+  text-decoration: underline;
+  color: var(--color-gold);
+}
+
+/* Toggle switch */
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+
+.settings-toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.settings-toggle-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.settings-toggle-hint {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+}
+
+.toggle-switch {
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: #d0cdc8;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.toggle-switch.toggle-on {
+  background: var(--color-navy);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.toggle-on .toggle-thumb {
+  transform: translateX(20px);
+}
+
+.settings-error {
+  color: var(--color-danger);
+  font-size: 0.88rem;
+  margin: 0.5rem 0 0;
+}
+
+.settings-footer {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-save {
+  background: var(--color-navy);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 140px;
+}
+
+.btn-save:hover {
+  background: #2a2a42;
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 1.5rem 1.25rem;
+  }
+}
